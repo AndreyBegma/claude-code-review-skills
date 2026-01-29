@@ -1,0 +1,26 @@
+{
+  "name": "claude-code-review-skills",
+  "owner": {
+    "name": "Andriy Behma"
+  },
+  "metadata": {
+    "description": "Code review skills for Claude Code: security scanning, dead code detection, code style analysis, and full audit",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "code-review-skills",
+      "source": ".",
+      "description": "Security, dead-code, code-style, and full-audit analysis skills",
+      "version": "1.0.0",
+      "keywords": [
+        "code-review",
+        "security",
+        "audit",
+        "dead-code",
+        "code-style"
+      ],
+      "category": "code-quality"
+    }
+  ]
+}
