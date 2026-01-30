@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "description": "Configuration for Claude Code Analyzer Plugin",
+
+  "exclusions": {
+    "directories": [
+      "node_modules",
+      "dist",
+      ".next",
+      "build",
+      "coverage",
+      ".git",
+      ".cache",
+      ".vscode",
+      ".idea"
+    ],
+    "files": ["*.lock", "*.log", ".DS_Store", "Thumbs.db"],
+    "patterns": [
+      "**/@generated/**",
+      "**/*.d.ts",
+      "**/migrations/**",
+      "**/seeds/**"
+    ]
+  },
+
+  "dead-code": {
+    "enabled": true,
+    "skipDependencyCheck": false,
+    "skipUnusedExports": false,
+    "skipEnvironmentVars": false,
+    "minFilesToAnalyze": 10
+  },
+
+  "security": {
+    "enabled": true,
+    "checkSecrets": true,
+    "checkInjection": true,
+    "checkAuthentication": true,
+    "checkInputValidation": true,
+    "secretPatterns": {
+      "aws": "AKIA[0-9A-Z]{16}",
+      "github": "ghp_[0-9a-zA-Z]{36}",
+      "stripe": "sk_live_[0-9a-zA-Z]{24,}",
+      "generic_private_key": "-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+    }
+  }
+}

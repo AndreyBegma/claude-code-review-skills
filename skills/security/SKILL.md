@@ -7,9 +7,28 @@ description: Scan the project for security vulnerabilities, insecure patterns, e
 
 You are a security auditor. Analyze the codebase for vulnerabilities, insecure patterns, and exposed secrets.
 
+## Single-Agent Analysis Strategy
+
+To keep token usage reasonable:
+
+- Run **ONE sequential scan**, not parallel agents
+- Prioritize **CRITICAL & HIGH severity** findings only
+- Start with secrets (highest impact, quickest to scan)
+- Then check auth/validation patterns
+- Skip lower-priority categories if running low on tokens
+
+**Always respect exclusions** from `.code-analyzer-config.json`:
+
+- Skip `node_modules`, `dist`, `.next`, `build` by default
+- Skip patterns: `@generated`, `migrations`, `seeds`, test files
+- Use custom `secretPatterns` if defined in config
+
+**For large projects:** If `$ARGUMENTS` is provided, scan ONLY that scope.
+
 ## Project Context
 
 Before starting analysis, gather project context yourself:
+
 1. Read `package.json` to determine the framework (NestJS, Next.js, Express, Fastify, Prisma, etc.)
 2. Check the directory structure (`apps/`, `packages/`, `src/`)
 3. Search for auth-related files (containing auth, guard, jwt, token, session, password, oauth)
@@ -19,11 +38,18 @@ Before starting analysis, gather project context yourself:
 
 ## Scope
 
-If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan the entire project.
+If `$ARGUMENTS` is provided, focus **ONLY** on that directory (essential for token efficiency).
+
+If no `$ARGUMENTS` and project is large (50+ files):
+
+- Scan high-risk areas first: auth files, API handlers, DB queries
+- Then general secrets scan
+- Report which areas were scanned if analysis was truncated
 
 ## Vulnerability Categories
 
 ### 1. Exposed Secrets & Credentials (CRITICAL)
+
 - Hardcoded API keys, passwords, tokens, connection strings in source code
 - `.env` files committed to git (check `git ls-files` for tracked env files)
 - Secrets in configuration files, seed data, or test fixtures that look real
@@ -39,6 +65,7 @@ If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan th
   - Database: connection strings with embedded passwords (`postgres://user:pass@`, `mongodb+srv://`)
 
 ### 2. Injection Vulnerabilities (CRITICAL)
+
 - **SQL Injection**: Raw queries with string interpolation/concatenation (`${}` in queries, `.query()` with user input)
 - **NoSQL Injection**: Unvalidated MongoDB/Mongoose query operators (`$gt`, `$ne`, `$regex` from user input)
 - **Command Injection**: `exec()`, `spawn()`, `execSync()` with unsanitized input
@@ -47,12 +74,14 @@ If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan th
 - **Path Traversal**: User-controlled file paths without sanitization (`../` sequences, `path.join` with user input not validated against base directory)
 
 ### 3. SSRF (Server-Side Request Forgery) (CRITICAL)
+
 - User-controlled URLs passed to `fetch()`, `axios()`, `http.get()`, `got()` without allowlist validation
 - URL parameters used to construct internal API calls
 - Image/webhook/callback URLs from user input hitting internal services
 - DNS rebinding: check if URL validation happens only once before request
 
 ### 4. Authentication & Authorization (HIGH)
+
 - Missing auth guards on sensitive endpoints/resolvers
 - JWT validation issues: missing expiry check, weak algorithms (HS256 with weak secret)
 - Broken access control: user A accessing user B's resources without ownership check
@@ -61,6 +90,7 @@ If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan th
 - CORS misconfiguration (`origin: '*'` or `credentials: true` with wildcard)
 
 ### 5. Input Validation & Mass Assignment (HIGH)
+
 - Missing DTO validation on API inputs (NestJS: missing `ValidationPipe`, missing class-validator decorators)
 - File upload without type/size validation
 - Missing sanitization of HTML/markdown content (XSS)
@@ -70,12 +100,14 @@ If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan th
 - **Prototype Pollution**: Deep merge/extend of user input into objects without prototype checks (`lodash.merge`, `deepmerge` with untrusted input, `JSON.parse` + recursive assign)
 
 ### 6. Race Conditions (HIGH)
+
 - Financial operations (balance updates, transfers) without locking or atomic operations
 - Check-then-act patterns: checking a condition and acting on it without atomicity (e.g., checking if username is available then creating it)
 - TOCTOU (time-of-check-time-of-use) in file operations
 - Missing database transactions for multi-step operations that should be atomic
 
 ### 7. Data Exposure (MEDIUM)
+
 - Sensitive fields returned in API responses (passwords, tokens, internal IDs)
 - Verbose error messages leaking stack traces or internal details in production
 - Debug/development endpoints accessible in production
@@ -83,17 +115,20 @@ If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan th
 - Logging sensitive data (request bodies with passwords, tokens)
 
 ### 8. Dependency Vulnerabilities (MEDIUM)
+
 - Run `npm audit` or `bun audit` or check for known vulnerable package versions
 - Outdated packages with known CVEs
 - Using deprecated/unmaintained packages for security-critical functions
 
 ### 9. Cryptographic Issues (MEDIUM)
+
 - Weak hashing (MD5, SHA1 for passwords — should use bcrypt/scrypt/argon2)
 - Missing encryption for sensitive data at rest
 - Insecure random number generation (`Math.random()` for tokens/secrets — should use `crypto.randomBytes`)
 - Hardcoded encryption keys or IVs
 
 ### 10. Infrastructure & Configuration (LOW-MEDIUM)
+
 - Missing security headers (HSTS, CSP, X-Frame-Options)
 - Insecure cookie settings (missing HttpOnly, Secure, SameSite)
 - Debug mode enabled in production configs
@@ -102,30 +137,35 @@ If `$ARGUMENTS` is provided, focus on that directory or file. Otherwise, scan th
 ## Exclusions
 
 - Test files (`*.spec.ts`, `*.test.ts`) — unless they contain real credentials
-- Generated code (`@generated`, `node_modules`, `dist`)
-- Example/mock credentials that are clearly fake (e.g., `password123` in test fixtures is fine if labeled as test data)
-
-## Output Format
-
-Organize by severity with actionable remediation:
-
-### CRITICAL
-For each finding:
-- **File**: `path/to/file.ts:line`
-- **Issue**: What is wrong
-- **Risk**: What an attacker could do
-- **Fix**: Specific code change or pattern to apply
-
-### HIGH
-Same format as above.
-
-### MEDIUM
-Same format as above.
-
-### LOW
-Brief list with file references.
+  **Always start with summary, then findings:**
 
 ### Summary
+
+```
+🔍 Scan Scope: [full project or specific directory]
+📝 Areas Scanned: [e.g., secrets, auth, injection, input validation]
+⚠️ CRITICAL: [N], HIGH: [N]
+```
+
+### 🔴 CRITICAL Issues
+
+For each finding:
+
+- **File**: `path/to/file.ts:line`
+- **Issue**: [what is wrong]
+- **Risk**: [impact]
+- **Fix**: [specific remediation]
+
+### 🟠 HIGH Issues
+
+Same format as CRITICAL.
+
+### Notes
+
+If project is large and scan was truncated, mention which areas were covered
+
+### Summary
+
 - Total issues found by severity
 - Top 3 most important fixes to prioritize
 - Overall security posture assessment (1-2 sentences)
