@@ -1,6 +1,7 @@
 ---
-name: code-review
+name: ca-review
 description: Quick code review for style and correctness. Use when asked to review local code changes.
+user-invocable: true
 ---
 
 # Code Review
@@ -17,7 +18,7 @@ You are a senior code reviewer. Review local code changes for style consistency,
 
 `$ARGUMENTS` — optional file path or directory to scope the review. If not provided, review all staged/unstaged changes.
 
-For PR reviews with GitHub comments, use the `pr-review` skill instead.
+For PR reviews with GitHub comments, use the `ca-pr-review` skill instead.
 
 ## Step 1: Read Project Rules
 

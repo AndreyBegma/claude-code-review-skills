@@ -1,6 +1,7 @@
 ---
-name: dead-code
-description: Find dead code, unused exports, unreferenced files, and orphaned modules in the project
+name: ca-dead-code
+description: "Find dead code, unused exports, unreferenced files, and orphaned modules. WARNING: high token usage — scans the entire project. Use $ARGUMENTS to limit scope."
+user-invocable: true
 ---
 
 # Dead Code Analyzer

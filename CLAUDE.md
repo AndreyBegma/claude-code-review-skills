@@ -2,20 +2,22 @@
 
 A collection of Claude Code skills for automated codebase analysis.
 
+All commands use the `ca-` prefix (code-analyzer) to avoid conflicts with built-in or other plugin commands.
+
 ## Structure
 
 ```
 skills/
-  security/SKILL.md          — Security vulnerability scanner (OWASP Top 10, secrets, injections)
-  dead-code/SKILL.md         — Dead code detector (unused exports, files, dependencies)
-  code-review/SKILL.md       — Local code review for style and correctness (reads CLAUDE.md for project rules)
-  pr-review/SKILL.md         — Review a PR and post inline comments on GitHub
-  pr-prepare-merge/SKILL.md  — Extract rules from PR comments and update CLAUDE.md via PR
+  security/SKILL.md          — /ca-security — Security vulnerability scanner (OWASP Top 10, secrets, injections)
+  dead-code/SKILL.md         — /ca-dead-code — Dead code detector (unused exports, files, dependencies)
+  code-review/SKILL.md       — /ca-review — Local code review for style and correctness
+  pr-review/SKILL.md         — /ca-pr-review — Review a PR and post inline comments on GitHub
+  pr-prepare-merge/SKILL.md  — /ca-pr-prepare-merge — Extract rules from PR comments and update CLAUDE.md via PR
 ```
 
 ## Skills Overview
 
-### 🔴 Security (`/security/SKILL.md`)
+### 🔴 `/ca-security`
 
 **Finds:** Exposed secrets, SQL/NoSQL injection, SSRF, auth bypass, insecure validation, race conditions, data exposure, weak crypto
 
@@ -30,7 +32,7 @@ skills/
 
 ---
 
-### ⚰️ Dead Code (`/dead-code/SKILL.md`)
+### ⚰️ `/ca-dead-code`
 
 **Finds:** Unused npm packages, unreferenced files, orphaned exports
 
@@ -44,7 +46,7 @@ skills/
 
 ---
 
-### 🔍 Code Review (`/code-review/SKILL.md`)
+### 🔍 `/ca-review`
 
 **Does:** Quick local code review for style and correctness — generic, project-agnostic
 
@@ -55,15 +57,15 @@ skills/
 3. Reviews: correctness, security, style, patterns
 4. Severity: HIGH / MEDIUM / LOW
 
-**Usage:** `code-review` (all local changes) or `code-review <path>` (specific file/directory)
+**Usage:** `/ca-review` (all local changes) or `/ca-review <path>` (specific file/directory)
 
 **Output:** Summary + Issues list + Verdict (APPROVE / REQUEST CHANGES)
 
-**Difference from `pr-review`:** `code-review` is a lightweight local review without GitHub interaction. `pr-review` posts inline comments on GitHub.
+**Difference from `/ca-pr-review`:** `/ca-review` is a lightweight local review without GitHub interaction. `/ca-pr-review` posts inline comments on GitHub.
 
 ---
 
-### 👀 PR Review (`/pr-review/SKILL.md`)
+### 👀 `/ca-pr-review`
 
 **Does:** Reviews a PR (or current branch) for correctness, security, style, and performance — posts inline comments directly on GitHub
 
@@ -75,13 +77,13 @@ skills/
 4. Posts inline comments via `gh api` with severity labels
 5. Adds `claude-reviewed` label to the PR
 
-**Usage:** `pr-review <PR_NUMBER>` or `pr-review` (no args = local review against `develop`)
+**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against `develop`)
 
 **Output:** `APPROVE` or `REQUEST CHANGES` with all issues listed, each commented on GitHub
 
 ---
 
-### 🔀 PR Prepare Merge (`/pr-prepare-merge/SKILL.md`)
+### 🔀 `/ca-pr-prepare-merge`
 
 **Does:** Reads all human comments on a PR, extracts generalizable coding rules, and opens a PR against `main` updating CLAUDE.md
 
@@ -93,7 +95,7 @@ skills/
 4. Checks existing CLAUDE.md to avoid duplicates
 5. Creates a new branch and PR with the CLAUDE.md updates
 
-**Usage:** Run before merging an approved PR: `pr-prepare-merge <PR_NUMBER>`
+**Usage:** Run before merging an approved PR: `/ca-pr-prepare-merge <PR_NUMBER>`
 
 **Output:** A new PR against `main` with extracted rules, or a report that no generalizable rules were found
 
@@ -152,7 +154,8 @@ Each skill is a standalone SKILL.md with frontmatter metadata and instructions f
 ## Conventions
 
 - Analysis skills are read-only — they never modify the target project
-- Action skills (e.g., `pr-prepare-merge`) may create branches/PRs but only modify instruction files (CLAUDE.md)
+- Action skills (e.g., `ca-pr-prepare-merge`) may create branches/PRs but only modify instruction files (CLAUDE.md)
 - Each SKILL.md stays under 200 lines (optimized for token efficiency)
+- All commands use the `ca-` prefix to avoid naming conflicts
 - All exclusions respect `.code-analyzer-config.json`
 - `node_modules`, `dist`, `.next` are **always** excluded across all skills

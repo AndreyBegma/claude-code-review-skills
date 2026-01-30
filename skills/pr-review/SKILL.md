@@ -1,6 +1,7 @@
 ---
-name: pr-review
+name: ca-pr-review
 description: Review a PR (or current branch if no PR number given) and post comments on GitHub
+user-invocable: true
 ---
 
 # PR Review

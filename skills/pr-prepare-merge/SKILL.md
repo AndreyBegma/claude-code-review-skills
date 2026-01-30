@@ -1,6 +1,7 @@
 ---
-name: pr-prepare-merge
+name: ca-pr-prepare-merge
 description: Extract generalizable rules from PR comments and open a PR updating CLAUDE.md instructions
+user-invocable: true
 ---
 
 # PR Prepare Merge

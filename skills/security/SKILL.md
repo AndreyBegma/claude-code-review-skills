@@ -1,6 +1,7 @@
 ---
-name: security
+name: ca-security
 description: Scan the project for security vulnerabilities, insecure patterns, exposed secrets, and OWASP Top 10 issues
+user-invocable: true
 ---
 
 # Security Vulnerability Scanner
