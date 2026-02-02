@@ -22,9 +22,16 @@ For PR reviews with GitHub comments, use the `ca-pr-review` skill instead.
 
 ## Step 1: Read Project Rules
 
-Read the project's `CLAUDE.md` file. This contains project-specific coding conventions, patterns, and rules. **Review against these rules first** — they take priority over general best practices.
+Gather project-specific rules (**in priority order**):
 
-If no `CLAUDE.md` exists, use general TypeScript/JavaScript best practices.
+1. **`CLAUDE.md`** — project-specific coding conventions, patterns, and rules. Highest priority.
+2. **Local skills** — scan for `.claude/skills/**/*.md` and any `skills/**/SKILL.md` in the project root. These may define architectural patterns, naming conventions, or workflow rules that the code should follow.
+
+Read all found files. Extract any conventions, patterns, or constraints that are relevant to code review (e.g., "services should not import from controllers", "use DTOs for API responses", naming rules, error handling patterns).
+
+**Priority**: `CLAUDE.md` > local skill conventions > general best practices.
+
+If none of these exist, use general TypeScript/JavaScript best practices.
 
 ## Step 2: Get Changes
 
@@ -71,7 +78,8 @@ Analyze every changed file. Check for:
 
 ## Severity Levels
 
-- **HIGH** — bug, security issue, data loss, crash
+- **CRITICAL** — security vulnerability, data loss, crash in production
+- **HIGH** — bug, logic error, missing validation on user input
 - **MEDIUM** — style violation, suboptimal pattern, missing error handling
 - **LOW** — nitpick, naming suggestion, minor improvement
 
@@ -82,7 +90,7 @@ Analyze every changed file. Check for:
 [1-2 sentences describing what was reviewed and overall quality]
 
 ## Issues
-- **[HIGH/MEDIUM/LOW]** file:line — description
+- **[CRITICAL/HIGH/MEDIUM/LOW]** file:line — description
 
 ## Verdict
 [APPROVE / REQUEST CHANGES]
@@ -90,6 +98,7 @@ Analyze every changed file. Check for:
 
 ## Important
 
+- **Do review test files** — unlike security/dead-code skills, code review includes tests since they are part of the changeset
 - Only flag issues in **changed code** — do not review unchanged surrounding code
 - Prefer project-specific rules from `CLAUDE.md` over generic opinions
 - Be specific: reference the exact line and explain why it's an issue

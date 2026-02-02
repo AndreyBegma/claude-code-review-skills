@@ -48,14 +48,14 @@ skills/
 
 ### 🔍 `/ca-code-review`
 
-**Does:** Quick local code review for style and correctness — generic, project-agnostic
+**Does:** Quick local code review for style and correctness — project-aware via CLAUDE.md and local skills
 
 **Workflow:**
 
-1. Reads project `CLAUDE.md` for project-specific rules (priority over general best practices)
+1. Reads project `CLAUDE.md` and local skills (`.claude/skills/`, `skills/**/SKILL.md`) for project-specific rules
 2. Gets diff (staged/unstaged changes)
 3. Reviews: correctness, security, style, patterns
-4. Severity: HIGH / MEDIUM / LOW
+4. Severity: CRITICAL / HIGH / MEDIUM / LOW
 
 **Usage:** `/ca-code-review` (all local changes) or `/ca-code-review <path>` (specific file/directory)
 
@@ -72,12 +72,12 @@ skills/
 **Workflow:**
 
 1. Fetches PR metadata, diff, and commit SHA
-2. Reads project `CLAUDE.md` for project-specific rules
+2. Reads project `CLAUDE.md` and local skills (`.claude/skills/`, `skills/**/SKILL.md`) for project-specific rules
 3. Reviews all changed files (correctness, security, style, performance, types)
 4. Posts inline comments via `gh api` with severity labels
 5. Adds `claude-reviewed` label to the PR
 
-**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against `develop`)
+**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against base branch, detected automatically with `develop` as fallback)
 
 **Output:** `APPROVE` or `REQUEST CHANGES` with all issues listed, each commented on GitHub
 
@@ -116,13 +116,17 @@ The plugin reads `.code-analyzer-config.json` in the project root to customize a
   "dead-code": {
     "enabled": true,
     "skipDependencyCheck": false,
-    "skipUnusedExports": false
+    "skipUnusedExports": false,
+    "skipEnvironmentVars": false,
+    "minFilesToAnalyze": 10
   },
 
   "security": {
     "enabled": true,
     "checkSecrets": true,
     "checkInjection": true,
+    "checkAuthentication": true,
+    "checkInputValidation": true,
     "secretPatterns": {
       "aws": "AKIA[0-9A-Z]{16}",
       "github": "ghp_[0-9a-zA-Z]{36}"
@@ -136,7 +140,12 @@ The plugin reads `.code-analyzer-config.json` in the project root to customize a
 - `exclusions.directories` — skip these folders in all analyses (node_modules always included)
 - `exclusions.patterns` — glob patterns to exclude (e.g., generated code, migrations)
 - Per-skill `enabled` flags to skip certain analyses
-- `dead-code.skipDependencyCheck` — disable npm audit if project has no package.json
+- `dead-code.skipDependencyCheck` — skip unused dependency scanning (e.g., if project has no package.json)
+- `dead-code.skipUnusedExports` — skip orphaned export detection
+- `dead-code.skipEnvironmentVars` — skip environment variable usage analysis
+- `dead-code.minFilesToAnalyze` — minimum file count threshold before analysis runs
+- `security.checkAuthentication` — enable/disable auth pattern checks
+- `security.checkInputValidation` — enable/disable input validation checks
 - `security.secretPatterns` — customize regex for secret detection
 
 ---
@@ -146,7 +155,7 @@ The plugin reads `.code-analyzer-config.json` in the project root to customize a
 Each skill is a standalone SKILL.md with frontmatter metadata and instructions for a Claude Code agent:
 
 - **Single-agent design** — each skill runs ONE sequential analysis (not parallel)
-- **Token efficient** — focuses on HIGH/CRITICAL findings only
+- **Token efficient** — prioritizes HIGH/CRITICAL findings; lower-severity issues are included where appropriate
 - **Scope-aware** — respects `$ARGUMENTS` to analyze just one directory
 - **Exclusion-aware** — reads `.code-analyzer-config.json` to skip files/folders
 - **Read-only** — analysis skills never modify the target project
@@ -158,4 +167,4 @@ Each skill is a standalone SKILL.md with frontmatter metadata and instructions f
 - Each SKILL.md stays under 200 lines (optimized for token efficiency)
 - All commands use the `ca-` prefix to avoid naming conflicts
 - All exclusions respect `.code-analyzer-config.json`
-- `node_modules`, `dist`, `.next` are **always** excluded across all skills
+- `node_modules`, `dist`, `.next`, `build` are **always** excluded across all skills

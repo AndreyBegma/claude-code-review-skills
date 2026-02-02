@@ -17,11 +17,11 @@ To keep token usage reasonable:
 - Analyze project layer-by-layer: structure → dependencies → exports → unused vars
 - Stop after finding clear dead code patterns
 
-**Always respect exclusions** from `.code-analyzer-config.json`:
+**Always respect `.code-analyzer-config.json`:**
 
-- Skip `node_modules`, `dist`, `.next`, `build` by default
-- Skip patterns: `@generated`, `migrations`, `seeds`
-- Skip generated files: `*.d.ts`, compiled outputs
+- **Exclusions**: skip `node_modules`, `dist`, `.next`, `build` by default; also skip patterns like `@generated`, `migrations`, `seeds`, `*.d.ts`
+- **Skip flags**: if `skipDependencyCheck` is true, skip Phase 1; if `skipUnusedExports` is true, skip Phase 3; if `skipEnvironmentVars` is true, skip env var analysis
+- **`minFilesToAnalyze`**: do not run analysis if file count is below this threshold
 
 ## Project Context
 
@@ -50,13 +50,14 @@ If no `$ARGUMENTS` and project looks large:
 - Search codebase for `import`, `require()`, and package CLI usage
 - ✅ Report unused packages only (high confidence)
 
-### Phase 2: Unreferenced Files (If Requested)
+### Phase 2: Unreferenced Files
 
 - Search for files with no imports in the scope
 - Skip: entry points, config, test, migration files
 - ✅ Report only files that look genuinely orphaned
+- Skip this phase if scope is very large (500+ files) and no `$ARGUMENTS` provided
 
-### Phase 3: Unused Exports (If Time Permits)
+### Phase 3: Unused Exports (If Phases 1-2 Complete)
 
 - Sample analysis of exported symbols
 - Check only within the target scope (not whole project)
@@ -85,14 +86,14 @@ If no `$ARGUMENTS` and project looks large:
 - Dead internal code (private methods, unreachable code)
 - Unused type definitions (require full codebase scan)
 - Dead routes & endpoints (context-dependent)
-- Environment variables (multiple file scanning)
+- Environment variables — unless `skipEnvironmentVars` is explicitly set to `false` in config
 
 ## Exclusions (Do NOT Flag)
 
 - Decorator-driven code: NestJS decorators (`@Controller`, `@Injectable`, `@Resolver`, etc.) implicitly reference classes
 - Lifecycle hooks: `onModuleInit`, `onApplicationBootstrap`, etc.
 - Test files (`*.spec.ts`, `*.test.ts`)
-- Generated code directories (`@generated`, `node_modules`, `dist`, `.next`)
+- Generated code directories (`@generated`, `node_modules`, `dist`, `.next`, `build`)
 - Configuration files (`*.config.ts`, `*.config.js`)
 - Migration and seed files
 - Dynamic imports (`import()` expressions) — code loaded dynamically may appear unused statically

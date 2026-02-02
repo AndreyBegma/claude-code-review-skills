@@ -59,12 +59,16 @@ Create `.code-analyzer-config.json` in the project root to customize analysis:
   "dead-code": {
     "enabled": true,
     "skipDependencyCheck": false,
-    "skipUnusedExports": false
+    "skipUnusedExports": false,
+    "skipEnvironmentVars": false,
+    "minFilesToAnalyze": 10
   },
   "security": {
     "enabled": true,
     "checkSecrets": true,
     "checkInjection": true,
+    "checkAuthentication": true,
+    "checkInputValidation": true,
     "secretPatterns": {
       "aws": "AKIA[0-9A-Z]{16}",
       "github": "ghp_[0-9a-zA-Z]{36}"
@@ -78,7 +82,7 @@ Create `.code-analyzer-config.json` in the project root to customize analysis:
 Each skill is a standalone `SKILL.md` with frontmatter metadata and instructions for a Claude Code agent:
 
 - **Single-agent design** — each skill runs one sequential analysis, not parallel
-- **Token efficient** — focuses on HIGH/CRITICAL findings only
+- **Token efficient** — prioritizes HIGH/CRITICAL findings; lower-severity issues are included where appropriate
 - **Scope-aware** — pass a path as argument to analyze a specific directory
 - **Exclusion-aware** — reads `.code-analyzer-config.json` to skip files/folders
 - **Read-only** — analysis skills never modify the target project

@@ -138,7 +138,10 @@ If no `$ARGUMENTS` and project is large (50+ files):
 ## Exclusions
 
 - Test files (`*.spec.ts`, `*.test.ts`) — unless they contain real credentials
-  **Always start with summary, then findings:**
+
+## Output Format
+
+**Always start with summary, then findings:**
 
 ### Summary
 
@@ -165,7 +168,7 @@ Same format as CRITICAL.
 
 If project is large and scan was truncated, mention which areas were covered
 
-### Summary
+### Overall Assessment
 
 - Total issues found by severity
 - Top 3 most important fixes to prioritize

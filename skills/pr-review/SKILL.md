@@ -32,7 +32,12 @@ COMMIT_SHA=$(gh pr view $ARGUMENTS --json headRefOid --jq '.headRefOid')
 
 ### Step 2: Read Project Rules
 
-Read the project's `CLAUDE.md` to understand project-specific coding conventions. Review against those rules first, then apply general best practices.
+Gather project-specific rules (**in priority order**):
+
+1. **`CLAUDE.md`** — project-specific coding conventions, patterns, and rules. Highest priority.
+2. **Local skills** — scan for `.claude/skills/**/*.md` and any `skills/**/SKILL.md` in the project root. These may define architectural patterns, naming conventions, or workflow rules that the code should follow.
+
+Read all found files. Extract any conventions, patterns, or constraints relevant to code review. **Priority**: `CLAUDE.md` > local skill conventions > general best practices.
 
 ### Step 3: Review the Diff
 
@@ -40,7 +45,7 @@ Analyze every changed file in the diff. Focus on:
 
 - **Correctness**: Logic errors, missing edge cases, off-by-one errors
 - **Security**: Injection, auth bypass, secrets, OWASP Top 10 (reference the security skill categories)
-- **Style**: Violations of CLAUDE.md rules
+- **Style**: Violations of CLAUDE.md and local skill conventions
 - **Performance**: N+1 queries, missing indexes, unnecessary re-renders
 - **Types**: Unsafe casts, `any` usage, missing validation
 
@@ -86,11 +91,15 @@ If the label command fails (e.g., due to project settings), note it in the outpu
 
 ## Flow: No PR Number
 
-When no `$ARGUMENTS` is provided, review the current branch locally:
+When no `$ARGUMENTS` is provided, review the current branch locally.
+
+Detect the base branch automatically:
 
 ```bash
-git diff develop...HEAD
-git log develop..HEAD --oneline
+# Try the upstream tracking branch first, then fall back to develop
+BASE=$(git rev-parse --abbrev-ref @{upstream} 2>/dev/null | sed 's|origin/||' || echo "develop")
+git diff $BASE...HEAD
+git log $BASE..HEAD --oneline
 ```
 
 Review changes using the same criteria. Do NOT post GitHub comments for local-only review.
@@ -115,6 +124,7 @@ Review changes using the same criteria. Do NOT post GitHub comments for local-on
 
 ## Important
 
+- **Do review test files** — unlike security/dead-code skills, PR review includes tests since they are part of the changeset
 - **Always post comments on GitHub** when reviewing a PR — do not just output text
 - Review ALL changed files, not just the first few
 - If the diff is very large, prioritize CRITICAL/HIGH issues and note that the review was partial
