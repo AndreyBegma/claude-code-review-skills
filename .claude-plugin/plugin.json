@@ -1,6 +1,6 @@
 {
-  "name": "code-review-skills",
-  "version": "1.0.0",
-  "description": "Security, dead-code, code-style, and full-audit analysis skills for Claude Code",
+  "name": "claude-code-analyzer-plugin",
+  "version": "1.1.0",
+  "description": "Automated codebase analysis: security scanning, dead code detection, code review, PR review with GitHub comments, and rule extraction from PR feedback",
   "skills": "./skills/"
 }

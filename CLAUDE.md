@@ -94,10 +94,11 @@ skills/
 3. Extracts patterns that apply broadly (coding conventions, architecture rules, security practices)
 4. Checks existing CLAUDE.md to avoid duplicates
 5. Creates a new branch and PR with the CLAUDE.md updates
+6. Adds `claude-rules` label to the created PR
 
 **Usage:** Run before merging an approved PR: `/ca-pr-prepare-merge <PR_NUMBER>`
 
-**Output:** A new PR against `main` with extracted rules, or a report that no generalizable rules were found
+**Output:** A new PR against `main` with extracted rules (labeled `claude-rules`), or a report that no generalizable rules were found
 
 ---
 

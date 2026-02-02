@@ -1,24 +1,26 @@
 {
-  "name": "claude-code-review-skills",
+  "name": "claude-code-analyzer-plugin",
   "owner": {
     "name": "Andriy Behma"
   },
   "metadata": {
-    "description": "Code review skills for Claude Code: security scanning, dead code detection, code review, PR review with GitHub comments, and PR prepare-merge rule extraction",
-    "version": "1.0.0"
+    "description": "Automated codebase analysis: security scanning (OWASP Top 10, secrets), dead code detection, code review, PR review with GitHub comments, and rule extraction from PR feedback",
+    "version": "1.1.0"
   },
   "plugins": [
     {
-      "name": "code-review-skills",
+      "name": "claude-code-analyzer-plugin",
       "source": "./",
-      "description": "Security, dead-code, code-review, pr-review, and pr-prepare-merge skills",
-      "version": "1.0.0",
+      "description": "Security, dead-code, code-review, pr-review, and pr-prepare-merge skills for automated code analysis",
+      "version": "1.1.0",
       "keywords": [
         "code-review",
         "security",
         "dead-code",
         "pr-review",
-        "pr-prepare-merge"
+        "pr-prepare-merge",
+        "owasp",
+        "code-analysis"
       ],
       "category": "code-quality"
     }

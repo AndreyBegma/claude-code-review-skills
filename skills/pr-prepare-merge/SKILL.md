@@ -91,15 +91,27 @@ git checkout -b claude-instructions-from-pr-<PR_NUMBER>
 
 # Apply the CLAUDE.md changes (use Edit tool)
 
-# Commit
+# Commit (without Co-Authored-By or AI attribution)
 git add CLAUDE.md
-git commit -m "Update CLAUDE.md with rules from PR #<PR_NUMBER>"
+git commit -m "Update CLAUDE.md with rules from PR #<PR_NUMBER>" --no-gpg-sign
 
 # Push and create PR
 git push -u origin claude-instructions-from-pr-<PR_NUMBER>
 ```
 
-Create the PR with `gh pr create`. Use the following structure for the body (replace placeholders with actual values):
+**Important:** Do NOT add `Co-Authored-By`, `Signed-off-by`, or any AI/Claude attribution to commits. The commit message should be clean and concise.
+
+Create the PR with `gh pr create`. After creating the PR, add a label:
+
+```bash
+# Create the label if it doesn't exist
+gh label create "claude-rules" --description "Auto-extracted rules from PR comments" --color "1d76db" --force
+
+# Add label to the newly created PR
+gh pr edit --add-label "claude-rules"
+```
+
+Use the following structure for the body (replace placeholders with actual values):
 
 - **Base**: `main`
 - **Title**: `Update CLAUDE.md with rules extracted from PR #<PR_NUMBER>`
