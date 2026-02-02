@@ -1,8 +1,8 @@
-# Claude Code Analyzer Plugin
+# Code Sentinel
 
-A collection of Claude Code skills for automated codebase analysis.
+AI code guardian — catches security issues, dead code, and style violations. Reviews PRs and learns your team's conventions.
 
-All commands use the `ca-` prefix (code-analyzer) to avoid conflicts with built-in or other plugin commands.
+All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-in or other plugin commands.
 
 ## Structure
 

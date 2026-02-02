@@ -1,17 +1,17 @@
 {
-  "name": "claude-code-analyzer-plugin",
+  "name": "code-sentinel",
   "owner": {
     "name": "Andriy Behma"
   },
   "metadata": {
-    "description": "Automated codebase analysis: security scanning (OWASP Top 10, secrets), dead code detection, code review, PR review with GitHub comments, and rule extraction from PR feedback",
+    "description": "AI code guardian — catches security issues, dead code, and style violations. Reviews PRs and learns your team's conventions.",
     "version": "1.1.0"
   },
   "plugins": [
     {
-      "name": "claude-code-analyzer-plugin",
+      "name": "code-sentinel",
       "source": "./",
-      "description": "Security, dead-code, code-review, pr-review, and pr-prepare-merge skills for automated code analysis",
+      "description": "Security scanning, dead code detection, PR review with GitHub comments, and automatic rule extraction",
       "version": "1.1.0",
       "keywords": [
         "code-review",
@@ -20,7 +20,8 @@
         "pr-review",
         "pr-prepare-merge",
         "owasp",
-        "code-analysis"
+        "sentinel",
+        "guardian"
       ],
       "category": "code-quality"
     }

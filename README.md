@@ -1,6 +1,6 @@
-# Claude Code Analyzer Plugin
+# Code Sentinel
 
-A [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin that adds automated code analysis skills: security scanning, dead code detection, code review, PR review with GitHub comments, and rule extraction from PR feedback.
+AI code guardian for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) — catches security issues, dead code, and style violations before they reach production. Reviews PRs and learns your team's conventions.
 
 ## Installation
 
@@ -10,13 +10,13 @@ claude plugin add claude-code-analyzer-plugin
 
 ## Commands
 
-| Command | Description |
-|---|---|
-| `/ca-security` | Scan for security vulnerabilities (OWASP Top 10, secrets, injections) |
-| `/ca-dead-code` | Find unused packages, orphaned files, dead exports. **High token usage** — pass a path to limit scope |
-| `/ca-code-review` | Quick local code review (staged/unstaged changes, no GitHub interaction) |
-| `/ca-pr-review <PR#>` | Review a PR and post inline comments on GitHub |
-| `/ca-pr-prepare-merge <PR#>` | Extract generalizable rules from PR comments and open a PR updating CLAUDE.md |
+| Command                      | Description                                                                                           |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `/ca-security`               | Scan for security vulnerabilities (OWASP Top 10, secrets, injections)                                 |
+| `/ca-dead-code`              | Find unused packages, orphaned files, dead exports. **High token usage** — pass a path to limit scope |
+| `/ca-code-review`            | Quick local code review (staged/unstaged changes, no GitHub interaction)                              |
+| `/ca-pr-review <PR#>`        | Review a PR and post inline comments on GitHub                                                        |
+| `/ca-pr-prepare-merge <PR#>` | Extract generalizable rules from PR comments and open a PR updating CLAUDE.md                         |
 
 All commands use the `ca-` prefix (code-analyzer) to avoid conflicts with built-in or other plugin commands.
 
