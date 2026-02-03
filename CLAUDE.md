@@ -8,8 +8,9 @@ All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-
 
 ```
 skills/
-  _shared/style-rules.md     — Shared style rules (referenced by code-review and pr-review)
-  security/SKILL.md          — /ca-security — Security vulnerability scanner (OWASP Top 10, secrets, injections)
+  _shared/style-rules.md          — Shared style rules (referenced by code-review and pr-review)
+  _shared/confirmation-flow.md    — Shared confirmation UX patterns (AskUserQuestion selectors)
+  security/SKILL.md               — /ca-security — Security vulnerability scanner (OWASP Top 10, secrets, injections)
   dead-code/SKILL.md         — /ca-dead-code — Dead code detector (unused exports, files, dependencies)
   code-review/SKILL.md       — /ca-code-review — Local code review for style and correctness
   pr-review/SKILL.md         — /ca-pr-review — Review a PR with CI status check, post inline comments on GitHub
@@ -144,7 +145,7 @@ skills/
 
 1. Collects findings from previous analysis (or from description/file)
 2. Checks for duplicates via `gh issue list --search`
-3. Shows a preview of all issues and asks for confirmation (yes / \<numbers\> / no)
+3. Shows a preview and asks for confirmation via interactive selector (with severity shortcuts)
 4. Creates confirmed issues with labels and code context
 
 **Usage:** `/ca-issue` (after analysis) or `/ca-issue "bug description"` or `/ca-issue src/file.ts`
@@ -271,3 +272,19 @@ Each skill is a standalone SKILL.md with frontmatter metadata and instructions f
 - All commands use the `ca-` prefix to avoid naming conflicts
 - All exclusions respect `.code-analyzer-config.json`
 - `node_modules`, `dist`, `.next`, `build` are **always** excluded across all skills
+
+### User Confirmation UX
+
+All confirmations use **interactive selectors** (`AskUserQuestion` tool), not text prompts. See `_shared/confirmation-flow.md` for full spec.
+
+**Bulk selection (findings with severity):**
+- Options: **All** / **Critical only** / **High+** / **None**
+- "Other" field accepts: numbers (`1 3`), inverted selection (`!2 4`), severity keywords (`critical`, `high+`)
+
+**Bulk selection (items without severity):**
+- Options: **All** / **None**
+- "Other" field accepts: numbers (`1 3`), inverted selection (`!2`)
+
+**Single-item confirmation:** **Send** / **Edit**
+
+**Binary choice:** **Yes** / **No** (with contextual descriptions)

@@ -1,5 +1,23 @@
 # Release Notes
 
+## v1.5.3 (2026-02-03)
+
+### Improvements
+
+- **Interactive selectors instead of text prompts** — all confirmations now use `AskUserQuestion` interactive selectors instead of typing `yes / no / numbers`. Users pick from a clickable list, with "Other" for custom input
+- **Severity shortcuts** — bulk selection for findings with severity now offers **Critical only** and **High+** options. No need to manually pick numbers for all CRITICAL items — just select "Critical only" or "High+" from the selector
+- **Inverted selection** — type `!3 5` in "Other" to select all items EXCEPT #3 and #5. Useful when you want most findings but need to skip a few
+- **Shared confirmation flow** — added `_shared/confirmation-flow.md` as a single reference for all confirmation patterns across skills
+
+### Updated Skills
+
+- `/ca-pr-review` — 6 confirmation points converted to selectors (CI check, resolved comments, post comments, create issues, run debug, send/edit)
+- `/ca-issue` — bulk selection and send/edit converted to selectors
+- `/ca-pr-prepare-merge` — rule selection and PR preview converted to selectors
+- `/ca-debug` — close issue confirmation converted to selector
+
+---
+
 ## v1.5.2 (2026-02-03)
 
 ### Improvements

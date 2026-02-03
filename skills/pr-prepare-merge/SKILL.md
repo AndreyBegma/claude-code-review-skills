@@ -125,7 +125,7 @@ For each generalizable comment:
 
 ## Step 5: Confirm with User
 
-**Never create a PR without user confirmation.** Show a numbered preview of all extracted rules:
+**Never create a PR without user confirmation.** Show a numbered preview of all extracted rules, then use `AskUserQuestion` (Bulk Selection without severity — see `../_shared/confirmation-flow.md`):
 
 ```
 Extracted N rules from PR #$ARGUMENTS:
@@ -140,15 +140,17 @@ Extracted N rules from PR #$ARGUMENTS:
    → Source: @reviewer — "floating point will cause rounding bugs"
 
 Skipped: 5 comments (not generalizable / duplicates / bot)
-
-Add all 3 rules to CLAUDE.md and create PR? (yes / <numbers> / no)
 ```
 
-- **yes** — include all rules, create the PR
-- **\<numbers\>** — include only the specified rules (e.g. `1 3` or `1, 3`)
-- **no** — stop, do not create a branch or PR
+Options:
+| Option | Description |
+|--------|-------------|
+| **All (Recommended)** | Include all rules, create the PR |
+| **None** | Stop, do not create a branch or PR |
 
-Wait for the user's response before proceeding. If the user picks `no`, skip to Step 7 (Output) and report that no PR was created.
+User can type numbers (`1 3`) or inverted (`!2`) in "Other".
+
+Wait for the user's response before proceeding. If the user picks `None`, skip to Step 7 (Output) and report that no PR was created.
 
 ## Step 5.5: Check Branch Protection & Merge Readiness
 
@@ -236,7 +238,7 @@ Run these commands **one at a time**:
 
 **Important:** Do NOT add `Co-Authored-By`, `Signed-off-by`, or any AI/Claude attribution to commits.
 
-6. Before creating the PR, show the full PR body and ask:
+6. Before creating the PR, show the full PR body and use `AskUserQuestion` (Single-Item Confirmation — see `../_shared/confirmation-flow.md`):
 
    ```
    PR preview:
@@ -246,12 +248,13 @@ Run these commands **one at a time**:
 
    ## Summary
    [full body here]
-
-   Send? (send / edit)
    ```
 
-   - **send** — create the PR as-is
-   - **edit** — let user modify the title or body before creating
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Send (Recommended)** | Create the PR as-is |
+   | **Edit** | Modify the title or body before creating |
 
    Then create the PR with `gh pr create`.
 

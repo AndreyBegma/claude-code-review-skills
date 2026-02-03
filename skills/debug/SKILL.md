@@ -346,7 +346,7 @@ If during investigation you determine that the bug has **already been fixed** in
 
 ### If debugging a GitHub issue (#123):
 
-1. Report to user:
+1. Report to user, then use `AskUserQuestion` (see `../_shared/confirmation-flow.md`):
 
    ```
    ✅ Issue #123 appears to be already fixed.
@@ -354,13 +354,14 @@ If during investigation you determine that the bug has **already been fixed** in
    The reported bug was: [description]
    Fix found at: file.ts:line — [what fixed it]
    Fixed in commit: [commit hash if identifiable]
-
-   Close the issue? (yes / edit / no)
    ```
 
-   - **yes** — close the issue with a comment
-   - **edit** — let user modify the closing comment
-   - **no** — do not close the issue
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Close issue (Recommended)** | Close with an auto-generated comment |
+   | **Close with custom comment** | Edit the closing comment before posting |
+   | **Keep open** | Do not close the issue |
 
 2. If user confirms **yes**, close the issue:
    ```bash

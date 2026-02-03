@@ -124,6 +124,25 @@ Create `.code-analyzer-config.json` in the project root to customize analysis:
 }
 ```
 
+## Confirmation UX
+
+All user confirmations use **interactive selectors** — no typing `yes` or `no`, just pick from a list.
+
+**Bulk selection (findings with severity):**
+
+| Option | What it does |
+|--------|-------------|
+| **All** | Process every item |
+| **Critical only** | Only CRITICAL severity |
+| **High+** | CRITICAL + HIGH |
+| **None** | Skip |
+
+In "Other" you can type:
+- `1 3` — only items #1 and #3
+- `!2 4` — all EXCEPT #2 and #4
+
+**Single items:** **Send** / **Edit** selector before each GitHub post.
+
 ## How it works
 
 Each skill is a standalone `SKILL.md` with frontmatter metadata and instructions for a Claude Code agent:
@@ -138,8 +157,9 @@ Each skill is a standalone `SKILL.md` with frontmatter metadata and instructions
 
 ```
 skills/
-  _shared/style-rules.md     — shared style rules (referenced by review skills)
-  security/SKILL.md          — /ca-security
+  _shared/style-rules.md          — shared style rules (referenced by review skills)
+  _shared/confirmation-flow.md    — shared confirmation UX patterns (interactive selectors)
+  security/SKILL.md               — /ca-security
   dead-code/SKILL.md         — /ca-dead-code
   code-review/SKILL.md       — /ca-code-review
   pr-review/SKILL.md         — /ca-pr-review

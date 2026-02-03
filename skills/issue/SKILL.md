@@ -54,7 +54,7 @@ If a similar issue already exists:
 
 ## Step 3: Prepare Preview
 
-Show the user a numbered list of all proposed issues:
+Show the user a numbered list of all proposed issues, then use `AskUserQuestion` (Bulk Selection with severity — see `../_shared/confirmation-flow.md`):
 
 ```
 Found N issues to create:
@@ -67,19 +67,23 @@ Found N issues to create:
 
 3. [HIGH] Hardcoded JWT secret in config.ts:12
    → Duplicate check: no existing issues found
-
-Create issues? (yes / <numbers> / no)
 ```
 
-**Wait for user response:**
+Options:
+| Option | Description |
+|--------|-------------|
+| **All (Recommended)** | Create all non-duplicate issues |
+| **Critical only** | Create only CRITICAL severity issues |
+| **High+** | Create CRITICAL + HIGH issues |
+| **None** | Stop, create nothing |
 
-- **yes** — create all non-duplicate issues
-- **\<numbers\>** — create only the specified issues (e.g. `1 3` or `1, 3`)
-- **no** — stop, create nothing
+User can type numbers (`1 3`) or inverted (`!1`) in "Other".
+
+**Wait for user response before proceeding.**
 
 ## Step 4: Create Issues
 
-For each confirmed issue, show the full issue body and ask before creating:
+For each confirmed issue, show the full issue body and use `AskUserQuestion` (Single-Item Confirmation — see `../_shared/confirmation-flow.md`):
 
 ```
 Issue preview:
@@ -89,12 +93,13 @@ Labels: bug, security, priority: critical
 
 ## Description
 [full body here]
-
-Send? (send / edit)
 ```
 
-- **send** — create the issue as-is
-- **edit** — let user modify the title or body before creating
+Options:
+| Option | Description |
+|--------|-------------|
+| **Send (Recommended)** | Create the issue as-is |
+| **Edit** | Modify the title or body before creating |
 
 Then run:
 

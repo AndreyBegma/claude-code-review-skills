@@ -55,31 +55,33 @@ Before reviewing code, check if CI has passed:
      ```bash
      gh run view RUN_ID --log-failed
      ```
-   - Ask user:
+   - Show which checks failed, then use `AskUserQuestion` (see `../_shared/confirmation-flow.md` — Three-Way Choice):
 
      ```
      ⚠️ CI failed on this PR:
      - ❌ build — failed
      - ❌ test — failed
      - ✅ lint — passed
-
-     View failed logs before reviewing? (yes / no / continue anyway)
      ```
 
-   - **yes** — show the relevant error logs, then continue to review
-   - **no** — skip logs, continue to review
-   - **continue anyway** — proceed without viewing logs
+     Options:
+     | Option | Description |
+     |--------|-------------|
+     | **View logs (Recommended)** | Show failed CI logs, then continue to review |
+     | **Skip logs** | Continue to review without viewing logs |
+     | **Cancel review** | Stop the review entirely |
 
-3. If CI is still **running**:
+3. If CI is still **running**, show status then use `AskUserQuestion` (Binary Choice):
 
    ```
    ⏳ CI is still running (build: in_progress, test: queued)
-
-   Wait for CI to complete? (yes / no)
    ```
 
-   - **yes** — wait and re-check every 30 seconds (max 5 minutes)
-   - **no** — proceed with review anyway
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Wait (Recommended)** | Re-check every 30 seconds (max 5 minutes) |
+   | **Continue** | Proceed with review without waiting for CI |
 
 4. If all checks **passed** — proceed silently to Step 2.
 
@@ -111,30 +113,35 @@ Before reviewing, check if there are existing review comments from previous revi
    - Add to a separate list: "Resolved issues from previous reviews"
    - After user confirmation, reply to those comments with "✅ Fixed"
 
-4. Show resolved issues in Step 4 preview:
+4. Show resolved issues, then use `AskUserQuestion` (Bulk Selection without severity — see `../_shared/confirmation-flow.md`):
 
    ```
    Previously reported issues now fixed:
-   - Comment by @reviewer on user.service.ts:45 — "Missing null check" → FIXED
 
-   Reply to mark as resolved? (yes / <numbers> / no)
+   1. Comment by @reviewer on user.service.ts:45 — "Missing null check" → FIXED
+   2. Comment by @reviewer on auth.ts:12 — "Missing validation" → FIXED
    ```
 
-   - **yes** — reply to all resolved comments
-   - **\<numbers\>** — reply only to the specified comments (e.g. `1 3` or `1, 3`)
-   - **no** — skip replying to resolved comments
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **All (Recommended)** | Reply "✅ Fixed" to all resolved comments |
+   | **None** | Skip, don't reply to any |
 
-5. For each confirmed resolved comment, show the reply and ask before posting:
+   User can type numbers (`1`) or inverted (`!2`) in "Other".
+
+5. For each confirmed resolved comment, show the reply and use `AskUserQuestion` (Single-Item Confirmation):
 
    ```
    Reply to comment by @reviewer on user.service.ts:45:
    "✅ Fixed"
-
-   Send? (send / edit)
    ```
 
-   - **send** — post the reply as-is
-   - **edit** — let user modify the reply before posting
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Send (Recommended)** | Post the reply as-is |
+   | **Edit** | Modify the reply before posting |
 
    Then post:
    ```bash
@@ -182,32 +189,46 @@ Apply rules from `../_shared/style-rules.md`. **CLAUDE.md rules take priority.**
 - Unused imports or variables introduced by the change
 - Dead code introduced by the change
 
-Assign severity per `../_shared/severity-levels.md` (CRITICAL / HIGH / MEDIUM / LOW). 2. [HIGH] Missing auth guard on admin.controller.ts:23 3. [MEDIUM] Unused import in utils.ts:1 4. [LOW] Naming: prefer camelCase in config.ts:12
+Assign severity per `../_shared/severity-levels.md` (CRITICAL / HIGH / MEDIUM / LOW). Then show the numbered list and use `AskUserQuestion` (Bulk Selection with severity — see `../_shared/confirmation-flow.md`):
 
-Post all 4 comments to GitHub? (yes / <numbers> / no)
+```
+Review findings:
+
+1. [CRITICAL] SQL injection in UserService.ts:45
+2. [HIGH] Missing auth guard on admin.controller.ts:23
+3. [MEDIUM] Unused import in utils.ts:1
+4. [LOW] Naming: prefer camelCase in config.ts:12
+```
+
+Options:
+| Option | Description |
+|--------|-------------|
+| **All (Recommended)** | Post all 4 comments to GitHub |
+| **Critical only** | Post only CRITICAL severity comments |
+| **High+** | Post CRITICAL + HIGH comments |
+| **None** | Output review locally only, don't post |
+
+User can type numbers (`1 3`) or inverted (`!3 4`) in "Other".
 
 ````
 
-- **yes** — post all comments to GitHub
-- **\<numbers\>** — post only the specified comments (e.g. `1 3` or `1, 3`)
-- **no** — output the review locally only, do not post any comments
-
-Wait for the user's response before proceeding. If the user picks `no`, skip Step 5 (Post) and Step 6 (Label) — go directly to the Output section with all issues listed as "local only".
+Wait for the user's response before proceeding. If the user picks `None`, skip Step 5 (Post) and Step 6 (Label) — go directly to the Output section with all issues listed as "local only".
 
 ### Step 5: Post Comments on GitHub
 
-For each **confirmed** issue, show the full comment body and ask before posting:
+For each **confirmed** issue, show the full comment body and use `AskUserQuestion` (Single-Item Confirmation):
 
 ```
 Comment for user.service.ts:45:
 
 **[HIGH]** Missing null check — `user` can be undefined when...
-
-Send? (send / edit)
 ```
 
-- **send** — post the comment as-is
-- **edit** — let user modify the comment body before posting
+Options:
+| Option | Description |
+|--------|-------------|
+| **Send (Recommended)** | Post the comment as-is |
+| **Edit** | Modify the comment body before posting |
 
 **Command template** (substitute OWNER, REPO, COMMIT_SHA, and issue details):
 
@@ -251,7 +272,7 @@ If the label command fails (e.g., due to project settings), note it in the outpu
 After posting comments, **always** offer to create GitHub issues for all findings (any severity) so they don't get lost in PR comments.
 
 1. If no issues were found at all, skip this step
-2. Show the user **all** findings from the review:
+2. Show the user **all** findings, then use `AskUserQuestion` (Bulk Selection with severity — see `../_shared/confirmation-flow.md`):
 
    ```
    Create GitHub issues for review findings?
@@ -260,13 +281,17 @@ After posting comments, **always** offer to create GitHub issues for all finding
    2. [HIGH] Missing auth guard on admin.controller.ts:23
    3. [MEDIUM] No allowedUsers check on unmarked-threads command
    4. [LOW] Fire-and-forget async without await
-
-   Create issues? (yes / <numbers> / no)
    ```
 
-   - **yes** — create issues for every finding
-   - **\<numbers\>** — create issues only for the specified findings (e.g. `1 3` or `1, 3`)
-   - **no** — skip issue creation entirely
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **All (Recommended)** | Create issues for every finding |
+   | **Critical only** | Create issues only for CRITICAL findings |
+   | **High+** | Create issues for CRITICAL + HIGH findings |
+   | **None** | Skip issue creation entirely |
+
+   User can type numbers (`1 3`) or inverted (`!4`) in "Other".
 
 3. For each confirmed issue, invoke `/ca-issue` with:
    - Title: `[SEVERITY] Brief description`
@@ -285,19 +310,22 @@ After posting comments, **always** offer to create GitHub issues for all finding
    - [LOW] Fire-and-forget async (user declined)
    ```
 
-5. For CRITICAL issues, offer to start debugging immediately:
+5. For CRITICAL issues, offer to start debugging. Use `AskUserQuestion` (Bulk Selection without severity):
 
    ```
    Start deep analysis for critical issues?
 
-   - #123: [CRITICAL] SQL injection in UserService.ts
-
-   Run /ca-debug? (yes / <numbers> / no)
+   1. #123: [CRITICAL] SQL injection in UserService.ts
+   2. #124: [CRITICAL] Auth bypass in admin.controller.ts
    ```
 
-   - **yes** — run `/ca-debug #ISSUE_NUMBER` for all CRITICAL issues
-   - **\<numbers\>** — run `/ca-debug` only for the specified issues (e.g. `1 3` or `1, 3`)
-   - **no** — skip debugging
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **All (Recommended)** | Run `/ca-debug` for all critical issues |
+   | **None** | Skip debugging |
+
+   User can type numbers (`1`) or inverted (`!2`) in "Other".
 
    This creates a full workflow: Review → Issue → Debug
 
