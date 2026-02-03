@@ -76,18 +76,18 @@ Analyze every changed file. Check for:
 ### Style (defer to CLAUDE.md rules)
 
 - Naming conventions (consistency within the project)
-- `const` vs `let` — prefer `const` unless reassignment is necessary
+- Prefer const over let unless reassignment is necessary
 - Always prefer destructuring
 - Early returns over deep nesting (invert conditions, return early)
-- Braces on all control flow statements — never single-line `if (!x) return`
-- No type assertions (`as`, `!`) without justification
-- No `any` types without justification
-- Import ordering — follow Biome rules (see `biome.json`)
+- Braces on all control flow statements — never single-line if statements
+- No type assertions (as, non-null assertion) without justification
+- No any types without justification
+- Import ordering — follow Biome rules (see biome.json)
 - Avoid optionality/nullability unless necessary
 - Avoid empty strings as sentinel values
-- Avoid unnecessary aliases (`password` → `pwd` is forbidden)
-- Use `camelCase` for constants, not `CAPITAL_CASE`
-- Avoid one-letter variable names except loop indexes (`i`, `j`, `k`)
+- Avoid unnecessary aliases (password → pwd is forbidden)
+- Use camelCase for constants, not CAPITAL_CASE
+- Avoid one-letter variable names except loop indexes (i, j, k)
 - Respect ESLint, tsconfig, and Biome settings in the project
 
 ### React/NextJS
