@@ -141,11 +141,12 @@ Extracted N rules from PR #$ARGUMENTS:
 
 Skipped: 5 comments (not generalizable / duplicates / bot)
 
-Add all 3 rules to CLAUDE.md and create PR? (yes / pick / no)
+Add all 3 rules to CLAUDE.md and create PR? (yes / pick / edit / no)
 ```
 
 - **yes** — include all rules, create the PR
 - **pick** — go through each rule one by one, asking yes/no
+- **edit** — let user modify the list of rules before proceeding
 - **no** — stop, do not create a branch or PR
 
 Wait for the user's response before proceeding. If the user picks `no`, skip to Step 7 (Output) and report that no PR was created.

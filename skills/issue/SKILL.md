@@ -68,13 +68,14 @@ Found N issues to create:
 3. [HIGH] Hardcoded JWT secret in config.ts:12
    → Duplicate check: no existing issues found
 
-Create issues 1, 3? (yes / pick / no)
+Create issues 1, 3? (yes / pick / edit / no)
 ```
 
 **Wait for user response:**
 
 - **yes** — create all non-duplicate issues
 - **pick** — go through each issue one by one, showing full body, asking yes/no
+- **edit** — let user modify the list of issues before creating
 - **no** — stop, create nothing
 
 ## Step 4: Create Issues

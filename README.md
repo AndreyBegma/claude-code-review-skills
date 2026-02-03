@@ -29,9 +29,9 @@ After installation, the `/ca-*` commands will be available in Claude Code.
 | `/ca-security`               | Scan for security vulnerabilities (OWASP Top 10, secrets, injections)                                 |
 | `/ca-dead-code`              | Find unused packages, orphaned files, dead exports. **High token usage** — pass a path to limit scope |
 | `/ca-code-review`            | Quick local code review (staged/unstaged changes, no GitHub interaction)                              |
-| `/ca-pr-review <PR#>`        | Review a PR and post inline comments on GitHub                                                        |
+| `/ca-pr-review <PR#>`        | Review a PR, post inline comments, and mark resolved issues as fixed                              |
 | `/ca-pr-prepare-merge <PR#>` | Extract generalizable rules from PR comments and open a PR updating CLAUDE.md                         |
-| `/ca-debug <error\|#issue>`  | Deep debugging — trace root cause from error message, stack trace, symptom, or GitHub issue           |
+| `/ca-debug <error\|#issue>`  | Deep debugging — trace root cause; close issue if already fixed                                   |
 | `/ca-issue [description]`    | Create GitHub issues from analysis findings — with duplicate check and user confirmation              |
 
 All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-in or other plugin commands.

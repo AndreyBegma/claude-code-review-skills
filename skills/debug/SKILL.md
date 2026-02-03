@@ -192,9 +192,53 @@ Before reporting:
 - `file.ts:line` — [same pattern, may also fail]
 ```
 
+## Step 6: Handle Already Fixed Issues
+
+If during investigation you determine that the bug has **already been fixed** in the current codebase:
+
+### If debugging a GitHub issue (#123):
+
+1. Report to user:
+
+   ```
+   ✅ Issue #123 appears to be already fixed.
+
+   The reported bug was: [description]
+   Fix found at: file.ts:line — [what fixed it]
+   Fixed in commit: [commit hash if identifiable]
+
+   Close the issue? (yes / edit / no)
+   ```
+
+   - **yes** — close the issue with a comment
+   - **edit** — let user modify the closing comment
+   - **no** — do not close the issue
+
+2. If user confirms **yes**, close the issue:
+   ```bash
+   gh issue close 123 --comment "Verified fixed. The issue was resolved at file.ts:line."
+   ```
+
+### If the fix is related to a PR comment:
+
+If the original bug came from a PR review comment that is now fixed:
+
+1. Get existing PR comments:
+
+   ```bash
+   gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments --jq ".[] | {id, body, path, line}"
+   ```
+
+2. Find the original comment about this issue
+
+3. Reply to confirm the fix:
+   ```bash
+   gh api repos/OWNER/REPO/pulls/comments/COMMENT_ID/replies --method POST -f body="✅ Fixed"
+   ```
+
 ## Important
 
-- **Read-only** — never modify the target project's code
+- **Read-only** — never modify the target project's code (diagnosis only)
 - **Be specific** — every finding must reference `file:line`
 - **One root cause** — don't list every possible issue; find THE cause
 - If confidence is LOW, explain what additional info would help narrow it down

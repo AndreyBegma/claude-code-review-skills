@@ -75,11 +75,12 @@ skills/
 
 1. Fetches PR metadata, diff, and commit SHA
 2. Reads project `CLAUDE.md` and project-local skills (`.claude/skills/`) for project-specific rules
-3. Reviews all changed files (correctness, security, style, performance, types)
-4. Posts inline comments via `gh api` with severity labels
-5. Adds `claude-reviewed` label to the PR
+3. Checks existing PR comments — if previously reported issues are now fixed, offers to reply "✅ Fixed"
+4. Reviews all changed files (correctness, security, style, performance, types)
+5. Posts inline comments via `gh api` with severity labels
+6. Adds `claude-reviewed` label to the PR
 
-**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against base branch, detected automatically with `develop` as fallback)
+**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against base branch, detected automatically with `main` or `develop` as fallback)
 
 **Output:** `APPROVE` or `REQUEST CHANGES` with all issues listed, each commented on GitHub
 
@@ -115,6 +116,7 @@ skills/
 3. Traces the call chain backwards from the error point to the origin
 4. Analyzes data flow: where the value was created, mutated, and broke
 5. Checks test coverage and suggests a regression test
+6. If bug is already fixed: offers to close the GitHub issue or reply to PR comment with "✅ Fixed"
 
 **Usage:** `/ca-debug "TypeError: Cannot read property 'id' of undefined at UserService.ts:45"` or `/ca-debug #123` (GitHub issue)
 
@@ -130,7 +132,7 @@ skills/
 
 1. Collects findings from previous analysis (or from description/file)
 2. Checks for duplicates via `gh issue list --search`
-3. Shows a preview of all issues and asks for confirmation (yes / pick / no)
+3. Shows a preview of all issues and asks for confirmation (yes / pick / edit / no)
 4. Creates confirmed issues with labels and code context
 
 **Usage:** `/ca-issue` (after analysis) or `/ca-issue "bug description"` or `/ca-issue src/file.ts`

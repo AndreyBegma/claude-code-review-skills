@@ -58,6 +58,42 @@ If Biome MCP is available, use it to get structured lint diagnostics:
 
 This is more accurate than manual style checking — Biome's rules take priority.
 
+### Step 2.6: Check Existing PR Comments
+
+Before reviewing, check if there are existing review comments from previous reviews:
+
+1. Get all existing review comments:
+
+   ```bash
+   gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments
+   ```
+
+2. For each comment, check:
+   - Is the issue mentioned in the comment still present in the current diff?
+   - Does the comment already have a reply?
+
+3. If an issue from a previous comment is **now fixed** and has **no reply**:
+   - Add to a separate list: "Resolved issues from previous reviews"
+   - After user confirmation, reply to those comments with "✅ Fixed"
+
+4. Show resolved issues in Step 4 preview:
+
+   ```
+   Previously reported issues now fixed:
+   - Comment by @reviewer on user.service.ts:45 — "Missing null check" → FIXED
+
+   Reply to mark as resolved? (yes / edit / no)
+   ```
+
+   - **yes** — reply to all resolved comments
+   - **edit** — let user modify the list before replying
+   - **no** — skip replying to resolved comments
+
+5. If user confirms, reply to each resolved comment:
+   ```bash
+   gh api repos/OWNER/REPO/pulls/comments/COMMENT_ID/replies --method POST -f body="✅ Fixed"
+   ```
+
 ### Step 3: Review the Diff
 
 Analyze every changed file in the diff. Check for:
@@ -139,11 +175,12 @@ Found N issues in PR #$ARGUMENTS:
 3. [MEDIUM] Unused import in utils.ts:1
 4. [LOW] Naming: prefer camelCase in config.ts:12
 
-Post all 4 comments to GitHub? (yes / pick / no)
+Post all 4 comments to GitHub? (yes / pick / edit / no)
 ```
 
 - **yes** — post all comments to GitHub
 - **pick** — go through each issue one by one, showing full comment body, asking yes/no
+- **edit** — let user modify the list of issues before posting
 - **no** — output the review locally only, do not post any comments
 
 Wait for the user's response before proceeding. If the user picks `no`, skip Step 5 (Post) and Step 6 (Label) — go directly to the Output section with all issues listed as "local only".
