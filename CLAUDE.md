@@ -11,10 +11,11 @@ skills/
   security/SKILL.md          — /ca-security — Security vulnerability scanner (OWASP Top 10, secrets, injections)
   dead-code/SKILL.md         — /ca-dead-code — Dead code detector (unused exports, files, dependencies)
   code-review/SKILL.md       — /ca-code-review — Local code review for style and correctness
-  pr-review/SKILL.md         — /ca-pr-review — Review a PR and post inline comments on GitHub
-  pr-prepare-merge/SKILL.md  — /ca-pr-prepare-merge — Extract rules from PR comments and update CLAUDE.md via PR
+  pr-review/SKILL.md         — /ca-pr-review — Review a PR with CI status check, post inline comments on GitHub
+  pr-prepare-merge/SKILL.md  — /ca-pr-prepare-merge — Extract rules from PR comments, check merge readiness, update CLAUDE.md via PR
   debug/SKILL.md             — /ca-debug — Deep debugger: trace root cause from error, stack trace, or symptom
   issue/SKILL.md             — /ca-issue — Create GitHub issues from analysis findings with user confirmation
+  perf/SKILL.md              — /ca-perf — Performance analyzer: N+1 queries, re-renders, memory leaks, bundle size
 ```
 
 ## Skills Overview
@@ -74,11 +75,12 @@ skills/
 **Workflow:**
 
 1. Fetches PR metadata, diff, and commit SHA
-2. Reads project `CLAUDE.md` and project-local skills (`.claude/skills/`) for project-specific rules
-3. Checks existing PR comments — if previously reported issues are now fixed, offers to reply "✅ Fixed"
-4. Reviews all changed files (correctness, security, style, performance, types)
-5. Posts inline comments via `gh api` with severity labels
-6. Adds `claude-reviewed` label to the PR
+2. **Checks CI status** — if failed, shows errors and offers to view logs before reviewing
+3. Reads project `CLAUDE.md` and project-local skills (`.claude/skills/`) for project-specific rules
+4. Checks existing PR comments — if previously reported issues are now fixed, offers to reply "✅ Fixed"
+5. Reviews all changed files (correctness, security, style, performance, types)
+6. Posts inline comments via `gh api` with severity labels
+7. Adds `claude-reviewed` label to the PR
 
 **Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against base branch, detected automatically with `main` or `develop` as fallback)
 
@@ -138,6 +140,24 @@ skills/
 **Usage:** `/ca-issue` (after analysis) or `/ca-issue "bug description"` or `/ca-issue src/file.ts`
 
 **Output:** Created issues with numbers + report of skipped items (duplicates, declined)
+
+---
+
+### ⚡ `/ca-perf`
+
+**Does:** Analyzes code for performance anti-patterns — N+1 queries, unnecessary re-renders, memory leaks, bundle bloat
+
+**Categories:**
+
+1. **Database/Queries:** N+1 patterns, missing includes, unbounded queries, missing pagination
+2. **React Performance:** Unnecessary re-renders, missing memoization, context misuse, expensive computations in render
+3. **Memory Leaks:** Uncleared intervals, missing cleanup, subscriptions not unsubscribed, event listeners not removed
+4. **Bundle Size:** Heavy dependencies, importing entire libraries, dev deps in production, missing code splitting
+5. **API/Network:** Sequential requests that could be parallel, missing caching, over/under-fetching
+
+**Usage:** `/ca-perf` (full project) or `/ca-perf src/api` (directory) or `/ca-perf queries` (category)
+
+**Output:** Findings table + detailed issues with code examples and fixes
 
 ---
 

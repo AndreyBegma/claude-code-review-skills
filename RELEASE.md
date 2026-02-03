@@ -1,5 +1,32 @@
 # Release Notes
 
+## v1.5.0 (2026-02-03)
+
+### New Skills
+
+- **`/ca-perf`** — Performance analyzer: N+1 queries, React re-renders, memory leaks, bundle size issues
+  - Database analysis: N+1 patterns, missing includes, unbounded queries
+  - React performance: unnecessary re-renders, missing memoization, context misuse
+  - Memory leaks: uncleared intervals, missing cleanup, dangling subscriptions
+  - Bundle size: heavy dependencies, missing tree-shaking, code splitting opportunities
+  - Network: sequential requests, missing caching, over/under-fetching
+
+### New Features
+
+- **CI status check in PR review** — `/ca-pr-review` now checks CI status before reviewing. If CI failed, shows errors and offers to view logs
+- **Branch protection check in PR prepare merge** — `/ca-pr-prepare-merge` now shows merge readiness checklist:
+  - CI status (passed/failed/pending)
+  - Review status (approved/changes_requested/required)
+  - Conflicts (none/has conflicts)
+  - Mergeable state
+
+### Improvements
+
+- Updated CLAUDE.md and README.md with new commands and features
+- Now 8 skills total in the plugin
+
+---
+
 ## v1.4.3 (2026-02-03)
 
 ### New Features

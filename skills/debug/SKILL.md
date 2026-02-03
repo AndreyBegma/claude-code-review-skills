@@ -226,8 +226,10 @@ If the original bug came from a PR review comment that is now fixed:
 1. Get existing PR comments:
 
    ```bash
-   gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments --jq ".[] | {id, body, path, line}"
+   gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments
    ```
+
+   Parse the JSON response to extract `id`, `body`, `path`, and `line` for each comment.
 
 2. Find the original comment about this issue
 

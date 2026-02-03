@@ -151,6 +151,53 @@ Add all 3 rules to CLAUDE.md and create PR? (yes / pick / edit / no)
 
 Wait for the user's response before proceeding. If the user picks `no`, skip to Step 7 (Output) and report that no PR was created.
 
+## Step 5.5: Check Branch Protection & Merge Readiness
+
+Before creating the rules PR, check if the **source PR** is ready to merge:
+
+1. Check PR status:
+
+   ```bash
+   gh pr view $ARGUMENTS --json mergeable,mergeStateStatus,reviewDecision,statusCheckRollup
+   ```
+
+2. Parse the response and show a checklist:
+
+   ```
+   ## Merge Readiness for PR #$ARGUMENTS
+
+   - [✅/❌] CI Status: [passed/failed/pending]
+   - [✅/❌] Reviews: [approved/changes_requested/review_required]
+   - [✅/❌] Conflicts: [none/has conflicts]
+   - [✅/❌] Mergeable: [yes/no/unknown]
+
+   Overall: [READY TO MERGE / NOT READY]
+   ```
+
+3. If there are **conflicts**:
+
+   ```
+   ⚠️ PR #$ARGUMENTS has merge conflicts.
+   The author needs to resolve conflicts before merging.
+   ```
+
+4. If **reviews are required** but not approved:
+
+   ```
+   ⚠️ PR #$ARGUMENTS requires review approval.
+   Current status: [CHANGES_REQUESTED / REVIEW_REQUIRED]
+   ```
+
+5. If **CI failed**:
+
+   ```
+   ⚠️ CI checks failed on PR #$ARGUMENTS.
+   Failed checks: [list of failed checks]
+   ```
+
+6. Continue to Step 6 regardless — the rules PR can be created even if source PR isn't ready.
+   The checklist is informational for the user.
+
 ## Step 6: Create PR
 
 Run these commands **one at a time**:

@@ -29,10 +29,11 @@ After installation, the `/ca-*` commands will be available in Claude Code.
 | `/ca-security`               | Scan for security vulnerabilities (OWASP Top 10, secrets, injections)                                 |
 | `/ca-dead-code`              | Find unused packages, orphaned files, dead exports. **High token usage** — pass a path to limit scope |
 | `/ca-code-review`            | Quick local code review (staged/unstaged changes, no GitHub interaction)                              |
-| `/ca-pr-review <PR#>`        | Review a PR, post inline comments, and mark resolved issues as fixed                                  |
-| `/ca-pr-prepare-merge <PR#>` | Extract generalizable rules from PR comments and open a PR updating CLAUDE.md                         |
+| `/ca-pr-review <PR#>`        | Review a PR with CI check, post inline comments, mark resolved issues as fixed                        |
+| `/ca-pr-prepare-merge <PR#>` | Extract rules from PR comments, check merge readiness, open PR updating CLAUDE.md                     |
 | `/ca-debug <error\|#issue>`  | Deep debugging — trace root cause; close issue if already fixed                                       |
 | `/ca-issue [description]`    | Create GitHub issues from analysis findings — with duplicate check and user confirmation              |
+| `/ca-perf [path]`            | Performance analysis: N+1 queries, React re-renders, memory leaks, bundle size                        |
 
 All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-in or other plugin commands.
 
@@ -77,6 +78,18 @@ All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-
 
 # Inspect file and create issues
 /ca-issue src/api/handler.ts
+
+# Performance analysis (full project)
+/ca-perf
+
+# Performance analysis (specific directory)
+/ca-perf src/services
+
+# Performance analysis by category
+/ca-perf queries      # N+1 and database issues
+/ca-perf react        # React re-renders and hooks
+/ca-perf memory       # Memory leaks
+/ca-perf bundle       # Bundle size issues
 ```
 
 ## Configuration
@@ -132,6 +145,7 @@ skills/
   pr-prepare-merge/SKILL.md  — /ca-pr-prepare-merge
   debug/SKILL.md             — /ca-debug
   issue/SKILL.md             — /ca-issue
+  perf/SKILL.md              — /ca-perf
 CLAUDE.md                    — internal project instructions
 README.md                    — this file
 ```

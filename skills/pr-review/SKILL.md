@@ -39,6 +39,50 @@ Run these commands **one at a time** (do not chain with `&&` or `|`):
    gh pr diff $ARGUMENTS
    ```
 
+### Step 1.5: Check CI Status
+
+Before reviewing code, check if CI has passed:
+
+1. Get CI run status for the PR branch:
+
+   ```bash
+   gh pr checks $ARGUMENTS
+   ```
+
+2. If any check **failed**:
+   - Show the user which checks failed
+   - Offer to view the failed run logs:
+     ```bash
+     gh run view RUN_ID --log-failed
+     ```
+   - Ask user:
+
+     ```
+     ⚠️ CI failed on this PR:
+     - ❌ build — failed
+     - ❌ test — failed
+     - ✅ lint — passed
+
+     View failed logs before reviewing? (yes / no / continue anyway)
+     ```
+
+   - **yes** — show the relevant error logs, then continue to review
+   - **no** — skip logs, continue to review
+   - **continue anyway** — proceed without viewing logs
+
+3. If CI is still **running**:
+
+   ```
+   ⏳ CI is still running (build: in_progress, test: queued)
+
+   Wait for CI to complete? (yes / no)
+   ```
+
+   - **yes** — wait and re-check every 30 seconds (max 5 minutes)
+   - **no** — proceed with review anyway
+
+4. If all checks **passed** — proceed silently to Step 2.
+
 ### Step 2: Read Project Rules
 
 Gather project-specific rules (**in priority order**):
