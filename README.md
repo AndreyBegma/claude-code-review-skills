@@ -34,6 +34,7 @@ After installation, the `/ca-*` commands will be available in Claude Code.
 | `/ca-debug <error\|#issue>`  | Deep debugging — trace root cause; close issue if already fixed                                       |
 | `/ca-issue [description]`    | Create GitHub issues from analysis findings — with duplicate check and user confirmation              |
 | `/ca-perf [path]`            | Performance analysis: N+1 queries, React re-renders, memory leaks, bundle size                        |
+| `/ca-ux-review [url\|focus]` | UX analysis: friction points, redesign proposals with before/after mockups                            |
 
 All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-in or other plugin commands.
 
@@ -90,6 +91,15 @@ All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-
 /ca-perf react        # React re-renders and hooks
 /ca-perf memory       # Memory leaks
 /ca-perf bundle       # Bundle size issues
+
+# UX review of a specific page
+/ca-ux-review http://localhost:3000/users
+
+# UX review focused on forms
+/ca-ux-review forms
+
+# Full UX audit
+/ca-ux-review full
 ```
 
 ## Configuration
@@ -152,6 +162,7 @@ Each skill is a standalone `SKILL.md` with frontmatter metadata and instructions
 - **Scope-aware** — pass a path as argument to analyze a specific directory
 - **Exclusion-aware** — reads `.code-analyzer-config.json` to skip files/folders
 - **Read-only** — analysis skills never modify the target project
+- **MCP-aware** — offers to install missing MCP servers when they would enhance the analysis
 
 ## Project structure
 
@@ -167,6 +178,7 @@ skills/
   debug/SKILL.md             — /ca-debug
   issue/SKILL.md             — /ca-issue
   perf/SKILL.md              — /ca-perf
+  ux-review/SKILL.md         — /ca-ux-review
 CLAUDE.md                    — internal project instructions
 README.md                    — this file
 ```
@@ -183,6 +195,7 @@ For enhanced analysis accuracy, install these optional MCP servers:
 
 - **Biome MCP** — structured lint diagnostics for code review
 - **TypeScript MCP** — type-aware dead code detection and debugging
+- **Puppeteer MCP** — browser automation for UX review screenshots
 
 See [CLAUDE.md](CLAUDE.md) for installation instructions.
 

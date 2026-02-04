@@ -26,9 +26,14 @@ Read `CLAUDE.md` for project conventions (highest priority). Also scan `.claude/
 
 **Priority**: `CLAUDE.md` > project skill conventions > general best practices.
 
-## Step 1.5: Use Biome MCP (if available)
+## Step 1.5: Use Biome MCP
 
 If Biome MCP is available, call `lint` on changed files. Biome violations take priority over manual style checks.
+
+If Biome MCP is **not available**, offer to install it using `AskUserQuestion` (Binary Choice):
+
+- question: "Biome MCP is not available. It provides structured lint diagnostics for more accurate review. Install it?"
+- options: **Install (Recommended)** — `bunx @anthropic/mcp add biome` / **Skip** — continue without it
 
 ## Step 2: Get Changes
 
