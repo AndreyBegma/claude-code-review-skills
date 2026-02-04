@@ -11,12 +11,12 @@ All user confirmations MUST use the `AskUserQuestion` tool (interactive selector
 
 When presenting a numbered list of findings that have severity levels (CRITICAL / HIGH / MEDIUM / LOW), use `AskUserQuestion` with these options:
 
-| Option | Description |
-|--------|-------------|
-| **All (Recommended)** | Process every item in the list |
-| **Critical only** | Process only CRITICAL severity items |
-| **High+** | Process CRITICAL + HIGH severity items |
-| **None** | Skip entirely, process nothing |
+| Option                | Description                            |
+| --------------------- | -------------------------------------- |
+| **All (Recommended)** | Process every item in the list         |
+| **Critical only**     | Process only CRITICAL severity items   |
+| **High+**             | Process CRITICAL + HIGH severity items |
+| **None**              | Skip entirely, process nothing         |
 
 The user can also type in the **"Other"** field:
 
@@ -43,42 +43,44 @@ Found 5 issues:
 ```
 
 Then ask with AskUserQuestion:
+
 - question: "Post 5 comments to GitHub?"
 - options: All (Recommended) / Critical only / High+ / None
 - multiSelect: false
 
-| User picks | Result |
-|------------|--------|
-| All | Post all 5 |
-| Critical only | Post #1 |
-| High+ | Post #1, #2, #5 |
+| User picks    | Result                                 |
+| ------------- | -------------------------------------- |
+| All           | Post all 5                             |
+| Critical only | Post #1                                |
+| High+         | Post #1, #2, #5                        |
 | Other: `!3 4` | Post #1, #2, #5 (all except #3 and #4) |
-| Other: `2 5` | Post #2 and #5 |
-| None | Skip |
+| Other: `2 5`  | Post #2 and #5                         |
+| None          | Skip                                   |
 
 ## Bulk Selection (without severity)
 
 When items don't have severity levels (e.g., resolved comments, extracted rules), use `AskUserQuestion` with:
 
-| Option | Description |
-|--------|-------------|
+| Option                | Description        |
+| --------------------- | ------------------ |
 | **All (Recommended)** | Process every item |
-| **None** | Skip entirely |
+| **None**              | Skip entirely      |
 
 The user can type numbers (`1 3`) or inverted selection (`!2`) in "Other".
 
 **Important:** Include a hint in the question text so users know how to pick specific items:
+
 - question: "Process N items? (Other: `1 3` to pick specific, `!2` to exclude)"
 
 ### Parsing "Other" input — CRITICAL
 
 When a user selects "Other" and types numbers, these are **ALWAYS item numbers from the list**, NOT option numbers:
 
-| User input in "Other" | Meaning | NOT |
-|----------------------|---------|-----|
-| `1` | Pick item #1 only | ❌ NOT "select option 1 (All)" |
-| `1 2` | Pick items #1 and #2 | ❌ NOT "select options 1 and 2" |
-| `!1` | All items EXCEPT #1 | — |
+| User input in "Other" | Meaning              | NOT                             |
+| --------------------- | -------------------- | ------------------------------- |
+| `1`                   | Pick item #1 only    | ❌ NOT "select option 1 (All)"  |
+| `1 2`                 | Pick items #1 and #2 | ❌ NOT "select options 1 and 2" |
+| `!1`                  | All items EXCEPT #1  | —                               |
 
 The options (All / None / etc.) are selected by clicking them directly, not by typing their number.
 
@@ -86,19 +88,19 @@ The options (All / None / etc.) are selected by clicking them directly, not by t
 
 For previewing a single item before posting (comment, issue, PR), use `AskUserQuestion` with:
 
-| Option | Description |
-|--------|-------------|
-| **Send (Recommended)** | Post/create as-is |
-| **Edit** | Let user modify before posting |
+| Option                 | Description                    |
+| ---------------------- | ------------------------------ |
+| **Send (Recommended)** | Post/create as-is              |
+| **Edit**               | Let user modify before posting |
 
 ## Binary Choice
 
 For simple yes/no decisions (e.g., "Wait for CI?"), use `AskUserQuestion` with:
 
-| Option | Description |
-|--------|-------------|
+| Option                | Description             |
+| --------------------- | ----------------------- |
 | **Yes (Recommended)** | Proceed with the action |
-| **No** | Skip |
+| **No**                | Skip                    |
 
 Add contextual descriptions to each option explaining what happens.
 
@@ -106,8 +108,8 @@ Add contextual descriptions to each option explaining what happens.
 
 For decisions with a third option (e.g., CI failure handling), use `AskUserQuestion` with up to 4 options. Example:
 
-| Option | Description |
-|--------|-------------|
+| Option                      | Description                                  |
+| --------------------------- | -------------------------------------------- |
 | **View logs (Recommended)** | Show failed CI logs, then continue to review |
-| **Skip logs** | Continue to review without viewing logs |
-| **Cancel** | Stop the review entirely |
+| **Skip logs**               | Continue to review without viewing logs      |
+| **Cancel**                  | Stop the review entirely                     |
