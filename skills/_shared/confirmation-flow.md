@@ -67,6 +67,21 @@ When items don't have severity levels (e.g., resolved comments, extracted rules)
 
 The user can type numbers (`1 3`) or inverted selection (`!2`) in "Other".
 
+**Important:** Include a hint in the question text so users know how to pick specific items:
+- question: "Process N items? (Other: `1 3` to pick specific, `!2` to exclude)"
+
+### Parsing "Other" input — CRITICAL
+
+When a user selects "Other" and types numbers, these are **ALWAYS item numbers from the list**, NOT option numbers:
+
+| User input in "Other" | Meaning | NOT |
+|----------------------|---------|-----|
+| `1` | Pick item #1 only | ❌ NOT "select option 1 (All)" |
+| `1 2` | Pick items #1 and #2 | ❌ NOT "select options 1 and 2" |
+| `!1` | All items EXCEPT #1 | — |
+
+The options (All / None / etc.) are selected by clicking them directly, not by typing their number.
+
 ## Single-Item Confirmation
 
 For previewing a single item before posting (comment, issue, PR), use `AskUserQuestion` with:

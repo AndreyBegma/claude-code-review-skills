@@ -148,7 +148,7 @@ Then use `AskUserQuestion` with a **short** question and **concise** option desc
 
 **IMPORTANT:** Use exactly 2 options — do NOT add a third "Select specific" option. Users who want specific items will type numbers in the built-in "Other" field.
 
-- **question**: "Which rules should be included in CLAUDE.md?"
+- **question**: "Which rules should be included in CLAUDE.md? (Other: type `1 3` to pick specific, or `!2` to exclude)"
 - **options** (exactly 2):
 
 | Option | Description |
@@ -157,6 +157,16 @@ Then use `AskUserQuestion` with a **short** question and **concise** option desc
 | **None** | Do not create a branch or PR |
 
 The built-in "Other" field accepts: numbers (`1 3`) to pick specific rules, or inverted (`!2`) to exclude specific rules.
+
+### Parsing "Other" input — CRITICAL
+
+When a user selects "Other" and types numbers, these are **ALWAYS rule numbers from the list above**, NOT option numbers:
+
+| User input in "Other" | Meaning | NOT |
+|----------------------|---------|-----|
+| `1` | Include only rule #1 | ❌ NOT "select option 1 (All)" |
+| `1 2` | Include rules #1 and #2 | ❌ NOT "All + None" |
+| `!1` | All rules EXCEPT #1 | — |
 
 Wait for the user's response before proceeding. If the user picks `None`, skip to Step 7 (Output) and report that no PR was created.
 
