@@ -94,7 +94,7 @@ skills/
 
 ### 🔀 `/ca-pr-prepare-merge`
 
-**Does:** Reads all human comments on a PR, extracts generalizable coding rules, and opens a PR against `main` updating CLAUDE.md
+**Does:** Reads all human comments on a PR, extracts generalizable coding rules, and opens a PR against the source PR's branch updating CLAUDE.md
 
 **Workflow:**
 
@@ -107,7 +107,7 @@ skills/
 
 **Usage:** Run before merging an approved PR: `/ca-pr-prepare-merge <PR_NUMBER>`
 
-**Output:** A new PR against `main` with extracted rules (labeled `claude-rules`), or a report that no generalizable rules were found
+**Output:** A new PR against the source PR's branch with extracted rules (labeled `claude-rules`), or a report that no generalizable rules were found
 
 ---
 

@@ -1,5 +1,14 @@
 # Release Notes
 
+## v1.5.4 (2026-02-04)
+
+### Improvements
+
+- **PR prepare merge targets source PR branch** — `/ca-pr-prepare-merge` now creates the rules PR against the source PR's branch (`headRefName`) instead of `main`, so extracted rules merge together with the PR
+- **Per-rule editing in PR prepare merge** — after bulk-selecting rules, each rule is shown individually with **Send / Edit** options, allowing you to modify the rule text before it's added to CLAUDE.md
+
+---
+
 ## v1.5.3 (2026-02-03)
 
 ### Improvements

@@ -6,7 +6,7 @@ user-invocable: true
 
 # PR Prepare Merge
 
-You are a senior engineering standards curator. Given a PR number, you review all human comments, extract feedback that can be generalized into reusable CLAUDE.md rules, and open a PR against `main` with the updates.
+You are a senior engineering standards curator. Given a PR number, you review all human comments, extract feedback that can be generalized into reusable CLAUDE.md rules, and open a PR against the source PR's branch with the updates.
 
 ## Inputs
 
@@ -152,6 +152,26 @@ User can type numbers (`1 3`) or inverted (`!2`) in "Other".
 
 Wait for the user's response before proceeding. If the user picks `None`, skip to Step 7 (Output) and report that no PR was created.
 
+### Step 5a: Confirm Each Rule
+
+For each **confirmed** rule, show the full rule text and use `AskUserQuestion` (Single-Item Confirmation — see `../_shared/confirmation-flow.md`):
+
+```
+Rule 1:
+
+- "Use findUniqueOrThrow instead of findUnique + null check"
+  → Source: @reviewer — "we should always use the throwing variant"
+  → Section: Patterns
+```
+
+Options:
+| Option | Description |
+|--------|-------------|
+| **Send (Recommended)** | Add the rule as-is |
+| **Edit** | Modify the rule text before adding |
+
+If the user picks **Edit**, apply their changes to the rule text. Then continue to the next rule.
+
 ## Step 5.5: Check Branch Protection & Merge Readiness
 
 Before creating the rules PR, check if the **source PR** is ready to merge:
@@ -203,17 +223,17 @@ Before creating the rules PR, check if the **source PR** is ready to merge:
 
 Run these commands **one at a time**:
 
-1. Switch to main and update:
+1. Switch to the source PR's branch (`headRefName` from Step 1) and update:
 
    ```bash
-   git checkout main
+   git checkout <HEAD_REF_NAME>
    ```
 
    ```bash
-   git pull origin main
+   git pull origin <HEAD_REF_NAME>
    ```
 
-2. Create new branch:
+2. Create new branch from the PR's branch:
 
    ```bash
    git checkout -b claude-instructions-from-pr-<PR_NUMBER>
@@ -244,7 +264,7 @@ Run these commands **one at a time**:
    PR preview:
 
    Title: Update CLAUDE.md with rules extracted from PR #18
-   Base: main
+   Base: <HEAD_REF_NAME> (PR #$ARGUMENTS branch)
 
    ## Summary
    [full body here]
@@ -256,7 +276,7 @@ Run these commands **one at a time**:
    | **Send (Recommended)** | Create the PR as-is |
    | **Edit** | Modify the title or body before creating |
 
-   Then create the PR with `gh pr create`.
+   Then create the PR with `gh pr create --base <HEAD_REF_NAME>` (targeting the source PR's branch).
 
 7. Add label (run separately):
    ```bash
@@ -268,7 +288,7 @@ Run these commands **one at a time**:
 
 Use the following structure for the body (replace placeholders with actual values):
 
-- **Base**: `main`
+- **Base**: `<HEAD_REF_NAME>` (the source PR's branch)
 - **Title**: `Update CLAUDE.md with rules extracted from PR #<PR_NUMBER>`
 - **Body**:
 
@@ -303,7 +323,7 @@ Extracted generalizable coding rules from review comments on PR #<PR_NUMBER> and
 ### PR Created
 - PR URL: [link]
 - Branch: claude-instructions-from-pr-$ARGUMENTS
-- Base: main
+- Base: <HEAD_REF_NAME> (PR #$ARGUMENTS branch)
 
 ### No Changes Needed
 [If no generalizable rules were found, state this and do NOT create a PR]
