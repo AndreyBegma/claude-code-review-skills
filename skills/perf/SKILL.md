@@ -35,7 +35,7 @@ You are a performance optimization specialist. Analyze the codebase for common p
 
 3. Read `CLAUDE.md` for any performance-related conventions
 
-4. If TypeScript MCP is available, use it for accurate call chain analysis
+4. If TypeScript MCP is available, use it for accurate call chain analysis. If **not available**, offer to install using `AskUserQuestion` (Binary Choice): **Install (Recommended)** — `bunx @anthropic/mcp add typescript` / **Skip**
 
 ## Step 2: Database & Query Analysis
 

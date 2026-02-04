@@ -59,7 +59,7 @@ If `$ARGUMENTS` is empty, ask the user what to debug.
 3. Read `CLAUDE.md` if present — project conventions may explain expected behavior
 4. Check `tsconfig.json` for strict mode, path aliases, compiler settings
 
-## Step 2.5: Use MCP Tools (if available)
+## Step 2.5: Use MCP Tools
 
 **TypeScript MCP** (prefer over grep):
 
@@ -69,6 +69,11 @@ If `$ARGUMENTS` is empty, ask the user what to debug.
 - `getTypeAtPosition()` — check real types
 
 **Biome MCP**: Run `lint` on error file — violations often correlate with bugs.
+
+If either MCP is **not available**, offer to install using `AskUserQuestion` (Binary Choice):
+
+- question: "[MCP Name] is not available. It enhances debugging with [benefit]. Install it?"
+- options: **Install (Recommended)** — `bunx @anthropic/mcp add [name]` / **Skip** — continue without it
 
 ## Step 3: Trace the Root Cause
 

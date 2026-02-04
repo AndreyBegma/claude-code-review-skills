@@ -18,6 +18,7 @@ skills/
   debug/SKILL.md             — /ca-debug — Deep debugger: trace root cause from error, stack trace, or symptom
   issue/SKILL.md             — /ca-issue — Create GitHub issues from analysis findings with user confirmation
   perf/SKILL.md              — /ca-perf — Performance analyzer: N+1 queries, re-renders, memory leaks, bundle size
+  ux-review/SKILL.md         — /ca-ux-review — UX analysis: friction points, redesign proposals, before/after mockups
 ```
 
 ## Skills Overview
@@ -172,6 +173,26 @@ skills/
 
 ---
 
+### 🎨 `/ca-ux-review`
+
+**Does:** Analyzes UI for friction points, proposes redesigns with before/after ASCII mockups, measures impact in clicks/time saved
+
+**Workflow:**
+
+1. Gathers project context (framework, UI library, app type)
+2. Captures current state (screenshots via Puppeteer/Playwright MCP if available, otherwise code analysis)
+3. Identifies friction: step bloat, cognitive load, keyboard hostility, feedback gaps, inconsistency
+4. Proposes redesigns with before/after mockups and impact metrics
+5. Outputs prioritized roadmap (quick wins vs bigger bets)
+
+**Usage:** `/ca-ux-review http://localhost:3000/users` (URL) or `/ca-ux-review forms` (focus area) or `/ca-ux-review full` (complete audit)
+
+**Output:** Friction score + redesign proposals with ASCII mockups + prioritized roadmap
+
+**Enhanced with:** Puppeteer/Playwright/Browserbase MCP for live screenshots and interaction recording
+
+---
+
 ## Configuration
 
 The plugin reads `.code-analyzer-config.json` in the project root to customize analysis:
@@ -252,6 +273,35 @@ Provides TypeScript compiler diagnostics and type information.
 
 **Install:** `bunx @anthropic/mcp add typescript`
 
+### Puppeteer MCP
+
+Provides browser automation for capturing screenshots and interacting with UI.
+
+**Benefits for `/ca-ux-review`:**
+
+- Capture screenshots of current UI state
+- Record user journeys and count interactions
+- Test responsive behavior on different viewports
+- Verify keyboard navigation support
+
+**Install:** `bunx @anthropic/mcp add puppeteer`
+
+### MCP Availability — Offer to Install
+
+When a skill checks for an MCP server and it is **not available**, offer the user to install it using `AskUserQuestion` (Binary Choice — see `_shared/confirmation-flow.md`):
+
+```
+⚠️ [MCP Name] is not available. It enhances this analysis with [brief benefit].
+```
+
+Options:
+| Option | Description |
+|--------|-------------|
+| **Install (Recommended)** | Run `bunx @anthropic/mcp add [name]` and continue |
+| **Skip** | Continue without it |
+
+After installation, restart the analysis to pick up the new MCP server.
+
 ---
 
 ## How it works
@@ -268,7 +318,6 @@ Each skill is a standalone SKILL.md with frontmatter metadata and instructions f
 
 - Analysis skills are read-only — they never modify the target project
 - Action skills (e.g., `ca-pr-prepare-merge`) may create branches/PRs but only modify instruction files (CLAUDE.md)
-- Each SKILL.md stays under 200 lines (optimized for token efficiency)
 - All commands use the `ca-` prefix to avoid naming conflicts
 - All exclusions respect `.code-analyzer-config.json`
 - `node_modules`, `dist`, `.next`, `build` are **always** excluded across all skills

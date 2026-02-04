@@ -1,11 +1,21 @@
 # Release Notes
 
-## v1.5.4 (2026-02-04)
+## v1.6.0 (2026-02-04)
+
+### New Skills
+
+- **`/ca-ux-review`** — UX analysis and redesign proposals: identifies friction points (step bloat, cognitive load, keyboard hostility), proposes redesigns with before/after ASCII mockups, measures impact in clicks/time saved. Includes a design patterns library (inline editing, command palette, progressive disclosure, bulk actions, etc.)
+
+### New Features
+
+- **MCP install prompts** — all skills that use MCP servers (Biome, TypeScript, Puppeteer) now offer to install them if not available, via interactive selector. No more silent fallback — users are guided to enhance their setup
 
 ### Improvements
 
 - **PR prepare merge targets source PR branch** — `/ca-pr-prepare-merge` now creates the rules PR against the source PR's branch (`headRefName`) instead of `main`, so extracted rules merge together with the PR
 - **Per-rule editing in PR prepare merge** — after bulk-selecting rules, each rule is shown individually with **Send / Edit** options, allowing you to modify the rule text before it's added to CLAUDE.md
+- **Selector UX fixes** — item lists are shown as plain text before `AskUserQuestion`, not inside option descriptions. "Other" input always means item numbers, never option numbers
+- Removed 200-line limit on SKILL.md files
 
 ---
 

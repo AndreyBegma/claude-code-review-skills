@@ -34,7 +34,7 @@ If no `$ARGUMENTS` and project looks large:
 - Then focus on the largest app by file count
 - Skip the rest unless requested
 
-## Use TypeScript MCP (if available)
+## Use TypeScript MCP
 
 If TypeScript MCP is available:
 
@@ -44,6 +44,11 @@ If TypeScript MCP is available:
 3. **Unreachable code**: TypeScript can detect unreachable code paths
 
 TypeScript MCP findings are HIGH CONFIDENCE — include them directly in the report.
+
+If TypeScript MCP is **not available**, offer to install it using `AskUserQuestion` (Binary Choice):
+
+- question: "TypeScript MCP is not available. It enables type-aware dead code detection via findAllReferences(). Install it?"
+- options: **Install (Recommended)** — `bunx @anthropic/mcp add typescript` / **Skip** — continue without it
 
 ## Analysis Phases (Sequential, Not Parallel)
 
