@@ -28,12 +28,30 @@ Analyze Google Search Console and GA4 CSV exports, identify optimization opportu
 
 ## Step 1: Check Browser MCP
 
-Try `mcp__puppeteer__*`, `mcp__playwright__*`, or `mcp__browserbase__*`.
+Check if Browser MCP is available. Try to use one of: `mcp__puppeteer__*`, `mcp__playwright__*`, or `mcp__browserbase__*`.
 
-**If not available** → Ask: "Browser MCP enables SERP screenshots and live site analysis. Install it?"
+If **no browser MCP is available**, ask user to install:
 
-- **Install** → `bunx @anthropic-ai/mcp-install@latest install puppeteer --client claude`
-- **Skip** → Continue with warning (limited in remote mode — can't fetch meta tags)
+Use `AskUserQuestion`:
+
+- **question**: "Browser MCP enables SERP screenshots and live site meta tag analysis. Install it?"
+- **options**:
+
+| Option                    | Description                                                                   |
+| ------------------------- | ----------------------------------------------------------------------------- |
+| **Install (Recommended)** | Run `bunx @anthropic-ai/mcp-install@latest install puppeteer --client claude` |
+| **Skip**                  | Continue without browser (limited in remote mode — can't fetch meta tags)     |
+
+If user picks **Skip**, output warning and continue:
+
+```
+⚠️ Continuing without Browser MCP. SEO analysis will have limitations:
+- No SERP screenshots
+- No competitor title/description analysis
+- Remote mode cannot fetch live meta tags
+```
+
+After installation, verify MCP is working by navigating to a test URL.
 
 ## Step 2: Detect & Parse Data
 

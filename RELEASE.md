@@ -1,5 +1,21 @@
 # Release Notes
 
+## v1.7.1 (2026-02-05)
+
+### Fixes
+
+- **PR Review comment feedback** — now shows URL and status after each posted comment:
+  ```
+  ✅ Posted: user.service.ts:45 — Missing null check
+     https://github.com/owner/repo/pull/18#discussion_r1234567890
+  ```
+- **PR Review output format** — improved final summary with clickable table of posted comments, separate sections for PR and local review modes
+- **PR Review reply feedback** — shows URL after replying "✅ Fixed" to resolved comments
+- **Fixed markdown formatting** — corrected 4-backtick code blocks and truncated text in style rules
+- **Unified MCP install prompts** — `/ca-seo-audit` now uses the same `AskUserQuestion` format as other skills for Browser MCP installation
+
+---
+
 ## v1.7.0 (2026-02-04)
 
 ### New Skills

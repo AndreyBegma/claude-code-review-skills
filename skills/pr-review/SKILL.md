@@ -169,6 +169,15 @@ Before reviewing, check if there are existing review comments from previous revi
    gh api repos/OWNER/REPO/pulls/comments/COMMENT_ID/replies --method POST -f body="✅ Fixed"
    ```
 
+   After posting each reply, show immediate feedback:
+
+   ```
+   ✅ Replied "Fixed" to @reviewer on user.service.ts:45
+      https://github.com/acme/backend/pull/18#discussion_r1234567890
+   ```
+
+   Track all replies for the final summary.
+
 ### Step 3: Review the Diff
 
 Analyze every changed file in the diff. Check for:
@@ -194,8 +203,8 @@ Analyze every changed file in the diff. Check for:
 - Early returns over deep nesting (invert conditions, return early)
 - Braces on all control flow statements — never single-line if statements
 - No type assertions (as, non-null assertion) without justification
-- No any types without justification
-- Import o
+- No `any` types without justification
+- Import ordering — group by external/internal, alphabetize within groups
 
 Apply rules from `../_shared/style-rules.md`. **CLAUDE.md rules take priority.**
 
@@ -231,8 +240,6 @@ Options:
 
 User can type numbers (`1 3`) or inverted (`!3 4`) in "Other".
 
-````
-
 Wait for the user's response before proceeding. If the user picks `None`, skip Step 5 (Post) and Step 6 (Label) — go directly to the Output section with all issues listed as "local only".
 
 ### Step 5: Post Comments on GitHub
@@ -255,13 +262,32 @@ Options:
 
 ```bash
 gh api repos/OWNER/REPO/pulls/PR_NUMBER/comments --method POST -f body="**[SEVERITY]** description" -f commit_id="COMMIT_SHA" -f path="file/path.ts" -F line=LINE_NUMBER -f side="RIGHT"
-````
+```
 
 **Example with real values:**
 
 ```bash
 gh api repos/acme/backend/pulls/18/comments --method POST -f body="**[HIGH]** Missing null check" -f commit_id="abc123def" -f path="src/user.service.ts" -F line=45 -f side="RIGHT"
 ```
+
+**After posting each comment:**
+
+1. Parse the JSON response from `gh api` to extract `id` and `html_url`
+2. Show immediate feedback to the user:
+
+   ```
+   ✅ Posted: user.service.ts:45 — Missing null check
+      https://github.com/acme/backend/pull/18#discussion_r1234567890
+   ```
+
+3. If the command fails, show the error:
+
+   ```
+   ❌ Failed: user.service.ts:45 — "line 45 does not belong to the diff"
+      Retrying on nearest changed line...
+   ```
+
+4. Track all posted comments with their URLs for the final summary.
 
 **CRITICAL line number rules:**
 
@@ -390,17 +416,53 @@ Review changes using the same criteria. Do NOT post GitHub comments for local-on
 ```
 ## Review: [APPROVE / REQUEST CHANGES]
 
-### Issues
-- file:line — issue (commented on GitHub ✓ / local only)
+**PR:** #18 — Feature: Add user authentication
+**Branch:** feature/auth → main
+**CI Status:** ✅ All checks passed
+
+### Posted Comments (3)
+
+| # | File | Line | Severity | Issue | Link |
+|---|------|------|----------|-------|------|
+| 1 | user.service.ts | 45 | CRITICAL | SQL injection | [view](URL) |
+| 2 | admin.controller.ts | 23 | HIGH | Missing auth guard | [view](URL) |
+| 3 | utils.ts | 1 | MEDIUM | Unused import | [view](URL) |
+
+### Skipped (1)
+- config.ts:12 — [LOW] Naming: prefer camelCase (user declined)
+
+### Resolved from Previous Reviews (2)
+- ✅ Replied "Fixed" to @reviewer on auth.ts:12 — [view](URL)
+- ⏭️ Skipped: @reviewer on config.ts:5 (user declined)
 
 ### Questions
 - [anything unclear about intent or requirements]
 
-### vs Requirements (if provided)
-- [MEETS / PARTIAL / MISSING] — note
+### Summary
+[1-2 sentences on overall quality and what needs attention]
+```
+
+**For local-only review (no PR number):**
+
+```
+## Review: [APPROVE / REQUEST CHANGES]
+
+**Branch:** feature/auth (local, not pushed)
+**Base:** main
+
+### Issues Found (4)
+
+| # | File | Line | Severity | Issue |
+|---|------|------|----------|-------|
+| 1 | user.service.ts | 45 | CRITICAL | SQL injection |
+| 2 | admin.controller.ts | 23 | HIGH | Missing auth guard |
+| 3 | utils.ts | 1 | MEDIUM | Unused import |
+| 4 | config.ts | 12 | LOW | Naming: prefer camelCase |
 
 ### Summary
 [1-2 sentences on overall quality and what needs attention]
+
+💡 Run `/ca-pr-review <PR_NUMBER>` after creating a PR to post these as GitHub comments.
 ```
 
 ## Important
