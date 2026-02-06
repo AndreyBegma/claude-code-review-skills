@@ -2,6 +2,7 @@
 name: ca-pr-prepare-merge-manual
 description: Extract rules from PR comments with interactive confirmations — review each rule before creating PR
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, Edit, AskUserQuestion
 ---
 
 # PR Prepare Merge (Manual)

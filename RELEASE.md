@@ -1,5 +1,14 @@
 # Release Notes
 
+## v1.8.1 (2026-02-06)
+
+### Improvements
+
+- **CLAUDE.md optimized** — reduced from 405 to 71 lines (~4× less tokens per session). Removed duplicated content that already exists in SKILL.md files (workflows, examples, usage, configuration). All skill behavior unchanged — execution logic lives in SKILL.md, not CLAUDE.md
+- **`allowed-tools` added to all 12 skills** — each skill now declares an explicit tool whitelist in frontmatter. Read-only skills (security, dead-code, perf) can no longer accidentally modify files. Auto-mode skills (pr-review) cannot trigger user prompts. Ensures safe, predictable execution
+
+---
+
 ## v1.8.0 (2026-02-06)
 
 ### New Features

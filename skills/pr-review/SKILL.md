@@ -2,6 +2,7 @@
 name: ca-pr-review
 description: Review a PR (or current branch if no PR number given) and post comments on GitHub
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, mcp__biome__*
 ---
 
 # PR Review

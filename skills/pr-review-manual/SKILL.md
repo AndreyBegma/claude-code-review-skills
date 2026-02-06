@@ -2,6 +2,7 @@
 name: ca-pr-review-manual
 description: Review a PR with interactive confirmations — choose which comments to post, edit before sending
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion, mcp__biome__*
 ---
 
 # PR Review (Manual)

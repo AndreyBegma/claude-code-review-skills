@@ -2,6 +2,7 @@
 name: ca-perf
 description: Analyze code for performance issues — N+1 queries, unnecessary re-renders, memory leaks, bundle size problems
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, mcp__typescript__*
 ---
 
 # Performance Analyzer

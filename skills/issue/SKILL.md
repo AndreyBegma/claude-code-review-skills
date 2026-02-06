@@ -2,6 +2,7 @@
 name: ca-issue
 description: Create GitHub issues from analysis findings, bug descriptions, or code inspection — with user confirmation before each issue
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion
 ---
 
 # GitHub Issue Creator

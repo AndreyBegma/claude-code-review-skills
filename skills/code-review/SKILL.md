@@ -2,6 +2,7 @@
 name: ca-code-review
 description: Quick code review for style and correctness. Use when asked to review local code changes.
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion, mcp__biome__*
 ---
 
 # Code Review

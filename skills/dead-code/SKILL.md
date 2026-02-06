@@ -2,6 +2,7 @@
 name: ca-dead-code
 description: "Find dead code, unused exports, unreferenced files, and orphaned modules. WARNING: high token usage — scans the entire project. Use $ARGUMENTS to limit scope."
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion, mcp__typescript__*
 ---
 
 # Dead Code Analyzer

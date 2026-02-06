@@ -2,7 +2,7 @@
 name: ca-seo-audit
 description: SEO analysis from GSC/GA4 exports — finds quick wins, problems, and proposes code fixes for meta tags
 user-invocable: true
-allowed-tools: Read, Grep, Glob, Edit, MultiEdit, mcp__puppeteer__*, mcp__playwright__*, mcp__browserbase__*
+allowed-tools: Read, Grep, Glob, Bash, Edit, MultiEdit, AskUserQuestion, mcp__puppeteer__*, mcp__playwright__*, mcp__browserbase__*
 ---
 
 # SEO Audit & Optimization

@@ -2,7 +2,7 @@
 name: ca-ux-review
 description: UX analysis and redesign proposals — identify friction, propose improvements with before/after mockups, measure impact in clicks/time saved
 user-invocable: true
-allowed-tools: Read, Grep, Glob, mcp__puppeteer__*, mcp__browserbase__*, mcp__playwright__*
+allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion, mcp__puppeteer__*, mcp__browserbase__*, mcp__playwright__*
 ---
 
 # UX Review & Transformation

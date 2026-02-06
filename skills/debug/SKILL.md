@@ -2,6 +2,7 @@
 name: ca-debug
 description: Deep debugging — trace root cause of a bug from error message, stack trace, symptom description, or GitHub issue number
 user-invocable: true
+allowed-tools: Read, Grep, Glob, Bash, AskUserQuestion, mcp__typescript__*, mcp__biome__*
 ---
 
 # Deep Issue Debugger
