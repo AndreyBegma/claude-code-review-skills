@@ -1,5 +1,39 @@
 # Release Notes
 
+## v1.8.0 (2026-02-06)
+
+### New Features
+
+- **CI-ready auto mode for PR skills** — `/ca-pr-review` and `/ca-pr-prepare-merge` now run fully automatically without any user prompts, ready for GitHub Actions and other CI pipelines
+- **Manual mode variants** — added `/ca-pr-review-manual` and `/ca-pr-prepare-merge-manual` with full interactive confirmations (choose what to post, edit before sending, pick specific rules)
+
+### Changes
+
+- **`/ca-pr-review` (auto mode):**
+  - Posts ALL review comments automatically — no bulk selection prompt
+  - Auto-views failed CI logs and continues (no "view logs / skip / cancel" prompt)
+  - Auto-replies "✅ Fixed" to all resolved comments from previous reviews
+  - Proceeds without waiting when CI is still running
+  - Skips Biome MCP install prompt — shows warning and continues
+  - Removed issue creation step (use `/ca-issue` separately if needed)
+
+- **`/ca-pr-prepare-merge` (auto mode):**
+  - Includes ALL extracted rules automatically — no bulk selection prompt
+  - No per-rule send/edit confirmation
+  - Creates PR without preview confirmation
+
+- **`/ca-pr-review-manual`** — preserves original interactive behavior: bulk selection with severity shortcuts, per-comment send/edit, issue creation offers, debug pipeline for CRITICAL issues
+
+- **`/ca-pr-prepare-merge-manual`** — preserves original interactive behavior: rule selection (All/None/specific), per-rule editing, PR preview with send/edit
+
+### Updated
+
+- CLAUDE.md — updated structure and skill descriptions with Auto/Manual labels
+- README.md — commands table with Mode column, usage examples for both modes, updated project structure
+- Marketplace keywords — added: ci, automation, github-actions
+
+---
+
 ## v1.7.1 (2026-02-05)
 
 ### Fixes

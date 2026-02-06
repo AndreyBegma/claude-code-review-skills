@@ -1,10 +1,10 @@
 ---
-name: ca-pr-prepare-merge
-description: Extract generalizable rules from PR comments and open a PR updating CLAUDE.md instructions
+name: ca-pr-prepare-merge-manual
+description: Extract rules from PR comments with interactive confirmations — review each rule before creating PR
 user-invocable: true
 ---
 
-# PR Prepare Merge
+# PR Prepare Merge (Manual)
 
 You are a senior engineering standards curator. Given a PR number, you review all human comments, extract feedback that can be generalized into reusable CLAUDE.md rules, and open a PR against the source PR's branch with the updates.
 
@@ -123,9 +123,11 @@ For each generalizable comment:
 - Include a brief "why" only if not obvious
 - Include a bad/good code example ONLY if the pattern is non-trivial
 
-## Step 5: Show Extracted Rules
+## Step 5: Confirm with User
 
-Output the list of extracted rules, then automatically include ALL of them:
+**Never create a PR without user confirmation.**
+
+First, output the numbered list of extracted rules as plain text (NOT inside AskUserQuestion):
 
 ```
 Extracted N rules from PR #$ARGUMENTS:
@@ -140,11 +142,53 @@ Extracted N rules from PR #$ARGUMENTS:
    → Source: @reviewer — "floating point will cause rounding bugs"
 
 Skipped: 5 comments (not generalizable / duplicates / bot)
-
-Including all N rules in CLAUDE.md...
 ```
 
-If no generalizable rules were found, skip to Step 7 (Output) and report that no PR was created.
+Then use `AskUserQuestion` with a **short** question and **concise** option descriptions (do NOT repeat the rules list inside the options).
+
+**IMPORTANT:** Use exactly 2 options — do NOT add a third "Select specific" option. Users who want specific items will type numbers in the built-in "Other" field.
+
+- **question**: "Which rules should be included in CLAUDE.md? (Other: type `1 3` to pick specific, or `!2` to exclude)"
+- **options** (exactly 2):
+
+| Option                | Description                  |
+| --------------------- | ---------------------------- |
+| **All (Recommended)** | Include all N rules          |
+| **None**              | Do not create a branch or PR |
+
+The built-in "Other" field accepts: numbers (`1 3`) to pick specific rules, or inverted (`!2`) to exclude specific rules.
+
+### Parsing "Other" input — CRITICAL
+
+When a user selects "Other" and types numbers, these are **ALWAYS rule numbers from the list above**, NOT option numbers:
+
+| User input in "Other" | Meaning                 | NOT                            |
+| --------------------- | ----------------------- | ------------------------------ |
+| `1`                   | Include only rule #1    | ❌ NOT "select option 1 (All)" |
+| `1 2`                 | Include rules #1 and #2 | ❌ NOT "All + None"            |
+| `!1`                  | All rules EXCEPT #1     | —                              |
+
+Wait for the user's response before proceeding. If the user picks `None`, skip to Step 7 (Output) and report that no PR was created.
+
+### Step 5a: Confirm Each Rule
+
+For each **confirmed** rule, show the full rule text and use `AskUserQuestion` (Single-Item Confirmation — see `../_shared/confirmation-flow.md`):
+
+```
+Rule 1:
+
+- "Use findUniqueOrThrow instead of findUnique + null check"
+  → Source: @reviewer — "we should always use the throwing variant"
+  → Section: Patterns
+```
+
+Options:
+| Option | Description |
+|--------|-------------|
+| **Send (Recommended)** | Add the rule as-is |
+| **Edit** | Modify the rule text before adding |
+
+If the user picks **Edit**, apply their changes to the rule text. Then continue to the next rule.
 
 ## Step 5.5: Check Branch Protection & Merge Readiness
 
@@ -232,13 +276,25 @@ Run these commands **one at a time**:
 
 **Important:** Do NOT add `Co-Authored-By`, `Signed-off-by`, or any AI/Claude attribution to commits.
 
-6. Show the PR preview, then automatically create it with `gh pr create --base <HEAD_REF_NAME>` (targeting the source PR's branch):
+6. Before creating the PR, show the full PR body and use `AskUserQuestion` (Single-Item Confirmation — see `../_shared/confirmation-flow.md`):
 
    ```
-   Creating PR:
+   PR preview:
+
    Title: Update CLAUDE.md with rules extracted from PR #18
    Base: <HEAD_REF_NAME> (PR #$ARGUMENTS branch)
+
+   ## Summary
+   [full body here]
    ```
+
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Send (Recommended)** | Create the PR as-is |
+   | **Edit** | Modify the title or body before creating |
+
+   Then create the PR with `gh pr create --base <HEAD_REF_NAME>` (targeting the source PR's branch).
 
 7. Add label (run separately):
    ```bash

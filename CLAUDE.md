@@ -8,18 +8,20 @@ All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-
 
 ```
 skills/
-  _shared/style-rules.md          — Shared style rules (referenced by code-review and pr-review)
-  _shared/confirmation-flow.md    — Shared confirmation UX patterns (AskUserQuestion selectors)
-  security/SKILL.md               — /ca-security — Security vulnerability scanner (OWASP Top 10, secrets, injections)
-  dead-code/SKILL.md         — /ca-dead-code — Dead code detector (unused exports, files, dependencies)
-  code-review/SKILL.md       — /ca-code-review — Local code review for style and correctness
-  pr-review/SKILL.md         — /ca-pr-review — Review a PR with CI status check, post inline comments on GitHub
-  pr-prepare-merge/SKILL.md  — /ca-pr-prepare-merge — Extract rules from PR comments, check merge readiness, update CLAUDE.md via PR
-  debug/SKILL.md             — /ca-debug — Deep debugger: trace root cause from error, stack trace, or symptom
-  issue/SKILL.md             — /ca-issue — Create GitHub issues from analysis findings with user confirmation
-  perf/SKILL.md              — /ca-perf — Performance analyzer: N+1 queries, re-renders, memory leaks, bundle size
-  ux-review/SKILL.md         — /ca-ux-review — UX analysis: friction points, redesign proposals, before/after mockups
-  seo-audit/SKILL.md         — /ca-seo-audit — SEO analysis from GSC/GA4 exports, code fixes for meta tags
+  _shared/style-rules.md                — Shared style rules (referenced by code-review and pr-review)
+  _shared/confirmation-flow.md          — Shared confirmation UX patterns (AskUserQuestion selectors)
+  security/SKILL.md                     — /ca-security — Security vulnerability scanner (OWASP Top 10, secrets, injections)
+  dead-code/SKILL.md                    — /ca-dead-code — Dead code detector (unused exports, files, dependencies)
+  code-review/SKILL.md                  — /ca-code-review — Local code review for style and correctness
+  pr-review/SKILL.md                    — /ca-pr-review — [AUTO] Review PR, post all comments automatically (CI-ready)
+  pr-review-manual/SKILL.md             — /ca-pr-review-manual — [MANUAL] Review PR with interactive confirmations
+  pr-prepare-merge/SKILL.md             — /ca-pr-prepare-merge — [AUTO] Extract rules, create PR automatically (CI-ready)
+  pr-prepare-merge-manual/SKILL.md      — /ca-pr-prepare-merge-manual — [MANUAL] Extract rules with interactive confirmations
+  debug/SKILL.md                        — /ca-debug — Deep debugger: trace root cause from error, stack trace, or symptom
+  issue/SKILL.md                        — /ca-issue — Create GitHub issues from analysis findings with user confirmation
+  perf/SKILL.md                         — /ca-perf — Performance analyzer: N+1 queries, re-renders, memory leaks, bundle size
+  ux-review/SKILL.md                    — /ca-ux-review — UX analysis: friction points, redesign proposals, before/after mockups
+  seo-audit/SKILL.md                    — /ca-seo-audit — SEO analysis from GSC/GA4 exports, code fixes for meta tags
 ```
 
 ## Skills Overview
@@ -72,40 +74,52 @@ skills/
 
 ---
 
-### 👀 `/ca-pr-review`
+### 👀 `/ca-pr-review` (Auto) · `/ca-pr-review-manual` (Manual)
 
 **Does:** Reviews a PR (or current branch) for correctness, security, style, and performance — posts inline comments directly on GitHub
 
-**Workflow:**
+**Auto mode** (`/ca-pr-review`) — CI-ready, no user interaction:
 
 1. Fetches PR metadata, diff, and commit SHA
-2. **Checks CI status** — if failed, shows errors and offers to view logs before reviewing
-3. Reads project `CLAUDE.md` and project-local skills (`.claude/skills/`) for project-specific rules
-4. Checks existing PR comments — if previously reported issues are now fixed, offers to reply "✅ Fixed"
+2. Checks CI status — auto-views failed logs, proceeds without waiting
+3. Reads project `CLAUDE.md` and project-local skills for rules
+4. Auto-replies "✅ Fixed" to resolved comments from previous reviews
 5. Reviews all changed files (correctness, security, style, performance, types)
-6. Posts inline comments via `gh api` with severity labels
+6. Posts ALL inline comments via `gh api` with severity labels
 7. Adds `claude-reviewed` label to the PR
-8. **Offers to create GitHub issues** for all findings (so they don't get lost in PR comments)
-9. **Offers to run `/ca-debug`** for CRITICAL issues (full pipeline: Review → Issue → Debug)
 
-**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against base branch, detected automatically with `main` or `develop` as fallback)
+**Manual mode** (`/ca-pr-review-manual`) — interactive confirmations:
+
+- Choose which comments to post (All / Critical only / High+ / None / specific numbers)
+- Edit each comment before posting
+- Offers to create GitHub issues for findings
+- Offers to run `/ca-debug` for CRITICAL issues
+
+**Usage:** `/ca-pr-review <PR_NUMBER>` or `/ca-pr-review` (no args = local review against base branch)
 
 **Output:** `APPROVE` or `REQUEST CHANGES` with all issues listed, each commented on GitHub
 
 ---
 
-### 🔀 `/ca-pr-prepare-merge`
+### 🔀 `/ca-pr-prepare-merge` (Auto) · `/ca-pr-prepare-merge-manual` (Manual)
 
 **Does:** Reads all human comments on a PR, extracts generalizable coding rules, and opens a PR against the source PR's branch updating CLAUDE.md
 
-**Workflow:**
+**Auto mode** (`/ca-pr-prepare-merge`) — CI-ready, no user interaction:
 
 1. Fetches all review comments, issue comments, and review bodies from the PR
 2. Filters out bot comments, approvals, and PR-specific feedback
 3. Extracts patterns that apply broadly (coding conventions, architecture rules, security practices)
 4. Checks existing CLAUDE.md to avoid duplicates
-5. Creates a new branch and PR with the CLAUDE.md updates
-6. Adds `claude-rules` label to the created PR
+5. Automatically includes all extracted rules
+6. Creates a new branch and PR with the CLAUDE.md updates
+7. Adds `claude-rules` label to the created PR
+
+**Manual mode** (`/ca-pr-prepare-merge-manual`) — interactive confirmations:
+
+- Choose which rules to include (All / None / specific numbers)
+- Edit each rule text before adding
+- Preview and edit the PR body before creating
 
 **Usage:** Run before merging an approved PR: `/ca-pr-prepare-merge <PR_NUMBER>`
 

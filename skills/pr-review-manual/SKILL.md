@@ -1,10 +1,10 @@
 ---
-name: ca-pr-review
-description: Review a PR (or current branch if no PR number given) and post comments on GitHub
+name: ca-pr-review-manual
+description: Review a PR with interactive confirmations — choose which comments to post, edit before sending
 user-invocable: true
 ---
 
-# PR Review
+# PR Review (Manual)
 
 You are a senior code reviewer. Review a PR and post findings as inline comments on GitHub.
 
@@ -51,11 +51,11 @@ Before reviewing code, check if CI has passed:
 
 2. If any check **failed**:
    - Show the user which checks failed
-   - Automatically view the failed run logs:
+   - Offer to view the failed run logs:
      ```bash
      gh run view RUN_ID --log-failed
      ```
-   - Show the summary and continue to review:
+   - Show which checks failed, then use `AskUserQuestion` (see `../_shared/confirmation-flow.md` — Three-Way Choice):
 
      ```
      ⚠️ CI failed on this PR:
@@ -64,13 +64,24 @@ Before reviewing code, check if CI has passed:
      - ✅ lint — passed
      ```
 
-   Then proceed to Step 2.
+     Options:
+     | Option | Description |
+     |--------|-------------|
+     | **View logs (Recommended)** | Show failed CI logs, then continue to review |
+     | **Skip logs** | Continue to review without viewing logs |
+     | **Cancel review** | Stop the review entirely |
 
-3. If CI is still **running**, show status and proceed to review without waiting:
+3. If CI is still **running**, show status then use `AskUserQuestion` (Binary Choice):
 
    ```
-   ⏳ CI is still running (build: in_progress, test: queued) — proceeding with review.
+   ⏳ CI is still running (build: in_progress, test: queued)
    ```
+
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Wait (Recommended)** | Re-check every 30 seconds (max 5 minutes) |
+   | **Continue** | Proceed with review without waiting for CI |
 
 4. If all checks **passed** — proceed silently to Step 2.
 
@@ -84,12 +95,25 @@ Read `CLAUDE.md` for project conventions (highest priority). Also scan `.claude/
 
 Check if Biome MCP is available. Biome provides structured lint diagnostics for more accurate review.
 
-If Biome MCP is **not available**, output a warning and continue without it:
+If Biome MCP is **not available**, ask user to install:
+
+Use `AskUserQuestion`:
+
+- **question**: "Biome MCP enhances PR review with structured lint diagnostics. Install it?"
+- **options**:
+
+| Option                    | Description                                                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------------------- |
+| **Install (Recommended)** | Run `bunx @anthropic-ai/mcp-install@latest install @anthropic-ai/mcp-server-biome --client claude` |
+| **Skip**                  | Continue without Biome (reduced lint accuracy)                                                     |
+
+If user picks **Skip**, output warning and continue:
 
 ```
-⚠️ Biome MCP not available. Lint analysis will be less accurate.
-   Install: bunx @anthropic-ai/mcp-install@latest install @anthropic-ai/mcp-server-biome --client claude
+⚠️ Continuing without Biome MCP. Lint analysis will be less accurate.
 ```
+
+After installation, verify MCP is working by calling `biome_lint` on a test file.
 
 ### Step 2.6: Check Existing PR Comments
 
@@ -107,8 +131,9 @@ Before reviewing, check if there are existing review comments from previous revi
 
 3. If an issue from a previous comment is **now fixed** and has **no reply**:
    - Add to a separate list: "Resolved issues from previous reviews"
+   - After user confirmation, reply to those comments with "✅ Fixed"
 
-4. Show resolved issues, then automatically reply "✅ Fixed" to all of them:
+4. Show resolved issues, then use `AskUserQuestion` (Bulk Selection without severity — see `../_shared/confirmation-flow.md`):
 
    ```
    Previously reported issues now fixed:
@@ -117,7 +142,28 @@ Before reviewing, check if there are existing review comments from previous revi
    2. Comment by @reviewer on auth.ts:12 — "Missing validation" → FIXED
    ```
 
-5. For each resolved comment, post the reply automatically:
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **All (Recommended)** | Reply "✅ Fixed" to all resolved comments |
+   | **None** | Skip, don't reply to any |
+
+   User can type numbers (`1`) or inverted (`!2`) in "Other".
+
+5. For each confirmed resolved comment, show the reply and use `AskUserQuestion` (Single-Item Confirmation):
+
+   ```
+   Reply to comment by @reviewer on user.service.ts:45:
+   "✅ Fixed"
+   ```
+
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **Send (Recommended)** | Post the reply as-is |
+   | **Edit** | Modify the reply before posting |
+
+   Then post:
 
    ```bash
    gh api repos/OWNER/REPO/pulls/comments/COMMENT_ID/replies --method POST -f body="✅ Fixed"
@@ -173,7 +219,7 @@ Apply rules from `../_shared/style-rules.md`. **CLAUDE.md rules take priority.**
 - Unused imports or variables introduced by the change
 - Dead code introduced by the change
 
-Assign severity per `../_shared/severity-levels.md` (CRITICAL / HIGH / MEDIUM / LOW). Show the numbered list, then automatically post ALL findings as comments on GitHub:
+Assign severity per `../_shared/severity-levels.md` (CRITICAL / HIGH / MEDIUM / LOW). Then show the numbered list and use `AskUserQuestion` (Bulk Selection with severity — see `../_shared/confirmation-flow.md`):
 
 ```
 Review findings:
@@ -182,13 +228,35 @@ Review findings:
 2. [HIGH] Missing auth guard on admin.controller.ts:23
 3. [MEDIUM] Unused import in utils.ts:1
 4. [LOW] Naming: prefer camelCase in config.ts:12
-
-Posting all 4 comments to GitHub...
 ```
+
+Options:
+| Option | Description |
+|--------|-------------|
+| **All (Recommended)** | Post all 4 comments to GitHub |
+| **Critical only** | Post only CRITICAL severity comments |
+| **High+** | Post CRITICAL + HIGH comments |
+| **None** | Output review locally only, don't post |
+
+User can type numbers (`1 3`) or inverted (`!3 4`) in "Other".
+
+Wait for the user's response before proceeding. If the user picks `None`, skip Step 5 (Post) and Step 6 (Label) — go directly to the Output section with all issues listed as "local only".
 
 ### Step 5: Post Comments on GitHub
 
-For each issue, automatically post the comment to GitHub.
+For each **confirmed** issue, show the full comment body and use `AskUserQuestion` (Single-Item Confirmation):
+
+```
+Comment for user.service.ts:45:
+
+**[HIGH]** Missing null check — `user` can be undefined when...
+```
+
+Options:
+| Option | Description |
+|--------|-------------|
+| **Send (Recommended)** | Post the comment as-is |
+| **Edit** | Modify the comment body before posting |
 
 **Command template** (substitute OWNER, REPO, COMMIT_SHA, and issue details):
 
@@ -246,6 +314,68 @@ Run these commands **one at a time**:
 
 If the label command fails (e.g., due to project settings), note it in the output but do not treat it as an error.
 
+### Step 7: Offer to Create Issues
+
+After posting comments, **always** offer to create GitHub issues for all findings (any severity) so they don't get lost in PR comments.
+
+1. If no issues were found at all, skip this step
+2. Show the user **all** findings, then use `AskUserQuestion` (Bulk Selection with severity — see `../_shared/confirmation-flow.md`):
+
+   ```
+   Create GitHub issues for review findings?
+
+   1. [CRITICAL] SQL injection in UserService.ts:45
+   2. [HIGH] Missing auth guard on admin.controller.ts:23
+   3. [MEDIUM] No allowedUsers check on unmarked-threads command
+   4. [LOW] Fire-and-forget async without await
+   ```
+
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **All (Recommended)** | Create issues for every finding |
+   | **Critical only** | Create issues only for CRITICAL findings |
+   | **High+** | Create issues for CRITICAL + HIGH findings |
+   | **None** | Skip issue creation entirely |
+
+   User can type numbers (`1 3`) or inverted (`!4`) in "Other".
+
+3. For each confirmed issue, invoke `/ca-issue` with:
+   - Title: `[SEVERITY] Brief description`
+   - Body: Full details from the review comment + link to PR
+   - Labels: `bug` for CRITICAL, `bug` or `code-review` for HIGH, `code-quality` for MEDIUM/LOW
+   - Reference: `Found during PR review: #PR_NUMBER`
+
+4. After creating issues, show summary:
+
+   ```
+   Created 2 issues:
+   - #123: [CRITICAL] SQL injection in UserService.ts
+   - #124: [HIGH] Missing auth guard in admin.controller.ts
+
+   Skipped:
+   - [LOW] Fire-and-forget async (user declined)
+   ```
+
+5. For CRITICAL issues, offer to start debugging. Use `AskUserQuestion` (Bulk Selection without severity):
+
+   ```
+   Start deep analysis for critical issues?
+
+   1. #123: [CRITICAL] SQL injection in UserService.ts
+   2. #124: [CRITICAL] Auth bypass in admin.controller.ts
+   ```
+
+   Options:
+   | Option | Description |
+   |--------|-------------|
+   | **All (Recommended)** | Run `/ca-debug` for all critical issues |
+   | **None** | Skip debugging |
+
+   User can type numbers (`1`) or inverted (`!2`) in "Other".
+
+   This creates a full workflow: Review → Issue → Debug
+
 ## Flow: No PR Number
 
 When no `$ARGUMENTS` is provided, review the current branch locally.
@@ -298,9 +428,12 @@ Review changes using the same criteria. Do NOT post GitHub comments for local-on
 | 2 | admin.controller.ts | 23 | HIGH | Missing auth guard | [view](URL) |
 | 3 | utils.ts | 1 | MEDIUM | Unused import | [view](URL) |
 
+### Skipped (1)
+- config.ts:12 — [LOW] Naming: prefer camelCase (user declined)
+
 ### Resolved from Previous Reviews (2)
 - ✅ Replied "Fixed" to @reviewer on auth.ts:12 — [view](URL)
-- ✅ Replied "Fixed" to @reviewer on config.ts:5 — [view](URL)
+- ⏭️ Skipped: @reviewer on config.ts:5 (user declined)
 
 ### Questions
 - [anything unclear about intent or requirements]

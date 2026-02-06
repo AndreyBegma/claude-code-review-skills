@@ -24,18 +24,20 @@ After installation, the `/ca-*` commands will be available in Claude Code.
 
 ## Commands
 
-| Command                      | Description                                                                                           |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `/ca-security`               | Scan for security vulnerabilities (OWASP Top 10, secrets, injections)                                 |
-| `/ca-dead-code`              | Find unused packages, orphaned files, dead exports. **High token usage** — pass a path to limit scope |
-| `/ca-code-review`            | Quick local code review (staged/unstaged changes, no GitHub interaction)                              |
-| `/ca-pr-review <PR#>`        | Review a PR with CI check, post inline comments, create issues for critical findings, trigger debug   |
-| `/ca-pr-prepare-merge <PR#>` | Extract rules from PR comments, check merge readiness, open PR updating CLAUDE.md                     |
-| `/ca-debug <error\|#issue>`  | Deep debugging — trace root cause; close issue if already fixed                                       |
-| `/ca-issue [description]`    | Create GitHub issues from analysis findings — with duplicate check and user confirmation              |
-| `/ca-perf [path]`            | Performance analysis: N+1 queries, React re-renders, memory leaks, bundle size                        |
-| `/ca-ux-review [url\|focus]` | UX analysis: friction points, redesign proposals with before/after mockups                            |
-| `/ca-seo-audit <path>`       | SEO analysis from GSC/GA4 CSV exports — quick wins, problems, meta tag fixes with `--fix` flag        |
+| Command                             | Mode   | Description                                                                                           |
+| ----------------------------------- | ------ | ----------------------------------------------------------------------------------------------------- |
+| `/ca-security`                      |        | Scan for security vulnerabilities (OWASP Top 10, secrets, injections)                                 |
+| `/ca-dead-code`                     |        | Find unused packages, orphaned files, dead exports. **High token usage** — pass a path to limit scope |
+| `/ca-code-review`                   |        | Quick local code review (staged/unstaged changes, no GitHub interaction)                              |
+| `/ca-pr-review <PR#>`              | Auto   | Review a PR, post all comments automatically — CI-ready, no prompts                                   |
+| `/ca-pr-review-manual <PR#>`       | Manual | Review a PR with interactive confirmations — choose what to post, edit before sending                 |
+| `/ca-pr-prepare-merge <PR#>`       | Auto   | Extract rules from PR comments, create CLAUDE.md PR automatically — CI-ready                          |
+| `/ca-pr-prepare-merge-manual <PR#>`| Manual | Extract rules with interactive confirmations — review each rule before creating PR                    |
+| `/ca-debug <error\|#issue>`         |        | Deep debugging — trace root cause; close issue if already fixed                                       |
+| `/ca-issue [description]`           |        | Create GitHub issues from analysis findings — with duplicate check and user confirmation              |
+| `/ca-perf [path]`                   |        | Performance analysis: N+1 queries, React re-renders, memory leaks, bundle size                        |
+| `/ca-ux-review [url\|focus]`        |        | UX analysis: friction points, redesign proposals with before/after mockups                            |
+| `/ca-seo-audit <path>`              |        | SEO analysis from GSC/GA4 CSV exports — quick wins, problems, meta tag fixes with `--fix` flag        |
 
 All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-in or other plugin commands.
 
@@ -57,11 +59,17 @@ All commands use the `ca-` prefix (code-sentinel) to avoid conflicts with built-
 # Review a specific file
 /ca-code-review src/services/user.service.ts
 
-# Review PR #42 and post inline comments on GitHub
+# Review PR #42 — auto mode (posts all comments, no prompts, CI-ready)
 /ca-pr-review 42
 
-# Extract rules from PR #42 comments into CLAUDE.md
+# Review PR #42 — manual mode (choose what to post, edit before sending)
+/ca-pr-review-manual 42
+
+# Extract rules from PR #42 — auto mode (creates PR automatically, CI-ready)
 /ca-pr-prepare-merge 42
+
+# Extract rules from PR #42 — manual mode (review each rule before creating PR)
+/ca-pr-prepare-merge-manual 42
 
 # Debug from error message
 /ca-debug "TypeError: Cannot read property 'id' of undefined at UserService.ts:45"
@@ -185,19 +193,22 @@ Each skill is a standalone `SKILL.md` with frontmatter metadata and instructions
 
 ```
 skills/
-  _shared/style-rules.md          — shared style rules (referenced by review skills)
-  _shared/confirmation-flow.md    — shared confirmation UX patterns (interactive selectors)
-  security/SKILL.md               — /ca-security
-  dead-code/SKILL.md         — /ca-dead-code
-  code-review/SKILL.md       — /ca-code-review
-  pr-review/SKILL.md         — /ca-pr-review
-  pr-prepare-merge/SKILL.md  — /ca-pr-prepare-merge
-  debug/SKILL.md             — /ca-debug
-  issue/SKILL.md             — /ca-issue
-  perf/SKILL.md              — /ca-perf
-  ux-review/SKILL.md         — /ca-ux-review
-CLAUDE.md                    — internal project instructions
-README.md                    — this file
+  _shared/style-rules.md                — shared style rules (referenced by review skills)
+  _shared/confirmation-flow.md          — shared confirmation UX patterns (interactive selectors)
+  security/SKILL.md                     — /ca-security
+  dead-code/SKILL.md                    — /ca-dead-code
+  code-review/SKILL.md                  — /ca-code-review
+  pr-review/SKILL.md                    — /ca-pr-review (auto, CI-ready)
+  pr-review-manual/SKILL.md             — /ca-pr-review-manual (interactive)
+  pr-prepare-merge/SKILL.md             — /ca-pr-prepare-merge (auto, CI-ready)
+  pr-prepare-merge-manual/SKILL.md      — /ca-pr-prepare-merge-manual (interactive)
+  debug/SKILL.md                        — /ca-debug
+  issue/SKILL.md                        — /ca-issue
+  perf/SKILL.md                         — /ca-perf
+  ux-review/SKILL.md                    — /ca-ux-review
+  seo-audit/SKILL.md                    — /ca-seo-audit
+CLAUDE.md                              — internal project instructions
+README.md                              — this file
 ```
 
 ## Requirements
